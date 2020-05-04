@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.ifmo.java'
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
