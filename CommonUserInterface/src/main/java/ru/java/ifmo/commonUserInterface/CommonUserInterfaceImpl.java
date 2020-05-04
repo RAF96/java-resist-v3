@@ -1,5 +1,7 @@
 package ru.java.ifmo.commonUserInterface;
 
+import ru.ifmo.java.client.ClientMetrics;
+
 import java.util.ArrayList;
 import java.util.List;
 
