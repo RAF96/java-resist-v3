@@ -4,4 +4,5 @@ include 'ManagingServer'
 include 'ComputeServer'
 include 'User'
 include 'Common'
+include 'Client'
 

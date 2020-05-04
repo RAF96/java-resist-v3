@@ -9,6 +9,5 @@ repositories {
 }
 
 test {
-    useJUnitPlatform();
+    useJUnitPlatform()
 }
-
