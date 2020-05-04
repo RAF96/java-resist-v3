@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package ru.ifmo.java.common.protocol;
+message Request {
+    repeated int32 number = 1;
+}
+
+message RequestOfComputingServerStartup {
+    enum ServerType {
+        INDIVIDUAL_THREAD_SERVER = 0;
+        BLOCKING_THREAD_SERVER = 1;
+        NOT_BLOCKING_THREAD_SERVER = 2;
+    }
+    ServerType serverType = 1;
+    int32 numberOfClients = 2;
+}
+
+message ResponseOfComputingServerStartup {
+    double requestProcessingTime = 1;
+    double clientProcessingTime = 2;
+}
+
+message ListOfDoubleVariables {
+    repeated double number = 1;
+}

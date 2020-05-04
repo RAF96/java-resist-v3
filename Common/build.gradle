@@ -1,14 +1,33 @@
-plugins {
-    id 'java'
-}
+// A minimal example Java project that uses the protobuf plugin.
+// To build it:
+// $ ../gradlew clean build
 
-group 'ru.ifmo.java'
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
+apply plugin: 'idea'
 
 repositories {
-    mavenCentral()
+    maven { url "https://plugins.gradle.org/m2/" }
 }
 
-test {
-    useJUnitPlatform()
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.8'
+    }
+}
+
+dependencies {
+    compile 'com.google.protobuf:protobuf-java:3.0.0'
+}
+
+protobuf {
+    protoc {
+        // The artifact spec for the Protobuf Compiler
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
+
 }
 
