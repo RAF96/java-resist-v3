@@ -2,18 +2,10 @@ plugins {
     id 'java'
 }
 
-group 'ru.ifmo.java'
-version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
-
-/*
-application {
-    mainClassName = ""
-}
- */
 
 test {
     useJUnitPlatform()

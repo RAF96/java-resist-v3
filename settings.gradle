@@ -1,2 +1,4 @@
 rootProject.name = 'java-course-work-v3'
+include 'CommonUserInterface'
+include 'ManagingServer'
 
