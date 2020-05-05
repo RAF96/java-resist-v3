@@ -1,5 +1,6 @@
 package ru.java.ifmo.commonUserInterface;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public interface SettingsOfComplexTestingOfServerPerformance extends Iterable<Se
     ) {
         return new SettingsOfComplexTestingOfServerPerformance() {
             @Override
+            @Nonnull
             public Iterator<SettingsOfServerPerformanceTesting> iterator() {
                 return new Iterator<>() {
                     int rangeIndex = 0;
@@ -58,12 +60,10 @@ public interface SettingsOfComplexTestingOfServerPerformance extends Iterable<Se
                                 numberOfClients = rangeOfVariableParameter.get(rangeIndex);
                                 break;
                             default:
-                                throw new UnknownTypeOfVariableParameter();
+                                throw new TypeOfVariableParameter.UnknownTypeOfVariableParameter();
                         }
                     }
 
-                    class UnknownTypeOfVariableParameter extends RuntimeException {
-                    }
 
                 };
             }

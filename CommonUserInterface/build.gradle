@@ -10,6 +10,8 @@ repositories {
 
 dependencies {
     compile project(":Client")
+    compile project(":Common")
+    compile 'org.jetbrains:annotations:16.0.2'
 }
 
 test {
