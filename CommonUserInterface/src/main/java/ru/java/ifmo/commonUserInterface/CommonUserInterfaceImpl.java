@@ -7,6 +7,7 @@ import ru.ifmo.java.common.Constant;
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.common.protocol.Protocol.RequestOfComputingServerStartup;
 import ru.ifmo.java.common.protocol.Protocol.ResponseOfComputingServerStartup;
+import ru.ifmo.java.computeServer.ServerMetrics;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -19,7 +20,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class CommonUserInterfaceImpl implements CommonUserInterface {
-    private Socket managingServerSocket;
+    private final Socket managingServerSocket;
+
+    public CommonUserInterfaceImpl() throws IOException {
+        managingServerSocket = new Socket(Constant.serverHost, Constant.managingServerPort);
+    }
 
     @Override
     public AggregateServerPerformanceMetrics runComplexTestingOfServerPerformance(SettingsOfComplexTestingOfServerPerformance settingsOfComplexTesting) {
@@ -77,7 +82,6 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
     }
 
     private void runServer(SettingsOfServerPerformanceTesting settings) throws IOException {
-        managingServerSocket = new Socket(Constant.serverHost, Constant.managingServerPort);
         RequestOfComputingServerStartup.newBuilder()
                 .setNumberOfClients(settings.getNumberOfClients())
                 .setServerType(ServerType.serverType2ProtocolServerType(settings.getServerType()))

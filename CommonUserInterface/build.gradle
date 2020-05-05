@@ -11,6 +11,7 @@ repositories {
 dependencies {
     compile project(":Client")
     compile project(":Common")
+    compile project(":ComputeServer")
     compile 'org.jetbrains:annotations:16.0.2'
 }
 
