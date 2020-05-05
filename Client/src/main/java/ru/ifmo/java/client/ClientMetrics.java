@@ -5,5 +5,10 @@ public interface ClientMetrics {
         return () -> timeOfWork / numberOfSendedRequests;
     }
 
+
+    static ClientMetrics create(double averageTimeSpendByClient) {
+        return () -> averageTimeSpendByClient;
+    }
+
     double getAverageTimeSpendByClient();
 }
