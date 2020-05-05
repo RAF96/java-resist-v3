@@ -1,5 +1,7 @@
 package ru.java.ifmo.commonUserInterface;
 
+import ru.ifmo.java.common.ServerType;
+
 import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;

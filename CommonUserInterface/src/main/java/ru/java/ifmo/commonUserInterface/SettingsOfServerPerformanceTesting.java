@@ -1,5 +1,7 @@
 package ru.java.ifmo.commonUserInterface;
 
+import ru.ifmo.java.common.ServerType;
+
 public interface SettingsOfServerPerformanceTesting {
     static SettingsOfServerPerformanceTesting create(
             ServerType serverType,

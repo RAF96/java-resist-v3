@@ -1,6 +1,6 @@
-package ru.java.ifmo.commonUserInterface;
+package ru.ifmo.java.common;
 
-import ru.ifmo.java.common.protocol.Protocol.*;
+import ru.ifmo.java.common.protocol.Protocol.RequestOfComputingServerStartup;
 
 public enum ServerType {
     INDIVIDUAL_THREAD_SERVER,
@@ -28,7 +28,7 @@ public enum ServerType {
 
 
     public static RequestOfComputingServerStartup.ServerType
-            serverType2ProtocolServerType(ServerType serverType) {
+    serverType2ProtocolServerType(ServerType serverType) {
         RequestOfComputingServerStartup.ServerType protocolServerType;
         switch (serverType) {
             case BLOCKING_THREAD_SERVER:
