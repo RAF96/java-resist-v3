@@ -15,11 +15,14 @@ message RequestOfComputingServerStartup {
     int32 numberOfClients = 2;
 }
 
+message RequestOfHaltingOfComputingServer {
+}
+
 message ResponseOfComputingServerStartup {
     double requestProcessingTime = 1;
     double clientProcessingTime = 2;
 }
 
-message ListOfDoubleVariables {
+message MessageWithListOfDoubleVariables {
     repeated double number = 1;
 }
