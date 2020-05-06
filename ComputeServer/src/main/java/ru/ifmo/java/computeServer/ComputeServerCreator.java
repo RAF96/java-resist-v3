@@ -3,7 +3,6 @@ package ru.ifmo.java.computeServer;
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.commonPartsOfComputeServer.ComputeServer;
 
-//TODO
 public interface ComputeServerCreator {
     static ComputeServer newIndividualThreadServer(int numberOfClients) {
         return null;

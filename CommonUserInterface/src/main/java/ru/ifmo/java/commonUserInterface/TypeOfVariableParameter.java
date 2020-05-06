@@ -1,4 +1,4 @@
-package ru.java.ifmo.commonUserInterface;
+package ru.ifmo.java.commonUserInterface;
 
 public enum TypeOfVariableParameter {
     SIZE_OF_REQUEST,

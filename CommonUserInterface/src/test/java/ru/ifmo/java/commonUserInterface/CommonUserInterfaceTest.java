@@ -1,10 +1,9 @@
-package ru.java.ifmo.commonUserInterface;
+package ru.ifmo.java.commonUserInterface;
 
 import org.junit.jupiter.api.Test;
 import ru.ifmo.java.common.ServerType;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 
 

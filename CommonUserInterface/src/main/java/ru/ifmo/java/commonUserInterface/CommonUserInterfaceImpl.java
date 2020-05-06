@@ -1,4 +1,4 @@
-package ru.java.ifmo.commonUserInterface;
+package ru.ifmo.java.commonUserInterface;
 
 import ru.ifmo.java.client.Client;
 import ru.ifmo.java.client.ClientMetrics;
@@ -64,7 +64,7 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
         }
         List<ClientMetrics> clientMetricsList = new ArrayList<>();
         for (var future : futures) {
-            // TODO. is it right way catching exception?
+            // FIXME. is it right way catching exception?
             ClientMetrics clientMetrics = null;
             boolean success = false;
             try {

@@ -10,6 +10,7 @@ repositories {
 dependencies {
     implementation project(":Common")
     implementation project(":CommonPartsOfComputeServer")
+    implementation project(":ComputeServer")
 }
 
 test {

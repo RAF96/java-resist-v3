@@ -1,4 +1,4 @@
-package ru.java.ifmo.commonUserInterface;
+package ru.ifmo.java.commonUserInterface;
 
 import java.util.List;
 import java.util.stream.Collectors;
