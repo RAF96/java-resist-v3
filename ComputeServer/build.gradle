@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.ifmo.java'
+
+dependencies {
+    implementation project(":CommonPartsOfComputeServer")
+    implementation project(":IndividualThreadServer")
+}
+
+repositories {
+    mavenCentral()
+}
