@@ -22,7 +22,7 @@ public class ManagingServerImpl implements ManagingServer {
         }
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Future<?> future = executorService.submit(ManagingServerSocketLoop.create(serverSocket));
-        //TODO. is it correct catching of exception?
+        //FIXME. is it correct catching of exception?
         try {
             future.get();
         } catch (InterruptedException | ExecutionException e) {
