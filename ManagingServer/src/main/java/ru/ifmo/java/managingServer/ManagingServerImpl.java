@@ -13,25 +13,17 @@ public class ManagingServerImpl implements ManagingServer {
 
     @Override
     public void run() {
-        ServerSocket serverSocket;
-        try {
-            serverSocket = new ServerSocket(Constant.managingServerPort);
+        try (ServerSocket serverSocket = new ServerSocket(Constant.managingServerPort)) {
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            Future<?> future = executorService.submit(ManagingServerSocketLoop.create(serverSocket));
+            //FIXME. is it correct catching of exception?
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
         } catch (IOException e) {
             e.printStackTrace();
-            return;
-        }
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<?> future = executorService.submit(ManagingServerSocketLoop.create(serverSocket));
-        //FIXME. is it correct catching of exception?
-        try {
-            future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                serverSocket.close();
-            } catch (IOException ignored) {
-            }
         }
     }
 }

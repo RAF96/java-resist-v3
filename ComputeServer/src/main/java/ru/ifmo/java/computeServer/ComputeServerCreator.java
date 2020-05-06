@@ -5,27 +5,26 @@ import ru.ifmo.java.commonPartsOfComputeServer.ComputeServer;
 
 //TODO
 public interface ComputeServerCreator {
-    static ComputeServer newIndividualThreadServer() {
+    static ComputeServer newIndividualThreadServer(int numberOfClients) {
         return null;
     }
 
-    static ComputeServer newBlockingServer() {
+    static ComputeServer newBlockingServer(int numberOfClients) {
         return null;
     }
 
-
-    static ComputeServer newNotBlockingServer() {
+    static ComputeServer newNotBlockingServer(int numberOfClients) {
         return null;
     }
 
-    static ComputeServer newComputeServer(ServerType serverType) {
+    static ComputeServer newComputeServer(ServerType serverType, int numberOfClients) {
         switch (serverType) {
             case INDIVIDUAL_THREAD_SERVER:
-                return newIndividualThreadServer();
+                return newIndividualThreadServer(numberOfClients);
             case BLOCKING_THREAD_SERVER:
-                return newBlockingServer();
+                return newBlockingServer(numberOfClients);
             case NOT_BLOCKING_THREAD_SERVER:
-                return newNotBlockingServer();
+                return newNotBlockingServer(numberOfClients);
             default:
                 throw new ServerType.UnknownServerType();
         }

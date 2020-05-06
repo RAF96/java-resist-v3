@@ -14,14 +14,11 @@ public class ManagingServerSocketLoopImpl implements ManagingServerSocketLoop {
     @Override
     public void run() {
         while(!Thread.interrupted()) {
-            Socket socket;
-            try {
-                socket = serverSocket.accept();
+            try (Socket socket = serverSocket.accept()) {
+                CommunicationHandler.create(socket).run();
             } catch (IOException e) {
                 e.printStackTrace();
-                break;
             }
-            CommunicationHandler.create(socket).run();
         }
     }
 }

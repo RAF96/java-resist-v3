@@ -2,7 +2,9 @@ package ru.ifmo.java.managingServer;
 
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.common.protocol.Protocol.*;
+import ru.ifmo.java.commonPartsOfComputeServer.ComputeServer;
 import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics;
+import ru.ifmo.java.computeServer.ComputeServerCreator;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -25,8 +27,13 @@ public class CommunicationHandlerImpl implements CommunicationHandler {
                 break;
             }
             ServerType serverType = ServerType.protocolServerType2ServerType(request.getServerType());
-            ServerMetrics serverMetrics = runComputeServer(serverType,
-                    request.getNumberOfClients());
+            ServerMetrics serverMetrics;
+            try {
+                serverMetrics = runComputeServer(serverType, request.getNumberOfClients());
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
             ResponseOfComputingServerStartup response = ResponseOfComputingServerStartup.newBuilder()
                     .setRequestProcessingTime(serverMetrics.getRequestProcessingTime())
                     .setClientProcessingTime(serverMetrics.getClientProcessingTime())
@@ -40,8 +47,8 @@ public class CommunicationHandlerImpl implements CommunicationHandler {
         }
     }
 
-    //TODO
-    private ServerMetrics runComputeServer(ServerType serverType, int numberOfClients) {
-        return null;
+    private ServerMetrics runComputeServer(ServerType serverType, int numberOfClients) throws Exception {
+        ComputeServer computeServer = ComputeServerCreator.newComputeServer(serverType, numberOfClients);
+        return computeServer.call();
     }
 }
