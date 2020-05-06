@@ -7,7 +7,7 @@ import ru.ifmo.java.common.Constant;
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.common.protocol.Protocol.RequestOfComputingServerStartup;
 import ru.ifmo.java.common.protocol.Protocol.ResponseOfComputingServerStartup;
-import ru.ifmo.java.computeServer.ServerMetrics;
+import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics;
 
 import java.io.IOException;
 import java.net.Socket;

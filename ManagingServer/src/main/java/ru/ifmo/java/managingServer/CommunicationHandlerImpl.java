@@ -2,7 +2,7 @@ package ru.ifmo.java.managingServer;
 
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.common.protocol.Protocol.*;
-import ru.ifmo.java.computeServer.ServerMetrics;
+import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics;
 
 import java.io.IOException;
 import java.net.Socket;

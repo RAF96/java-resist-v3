@@ -1,4 +1,4 @@
-package ru.ifmo.java.computeServer;
+package ru.ifmo.java.commonPartsOfComputeServer;
 
 public interface ServerMetrics {
     static ServerMetrics create(double requestProcessingTime, double clientProcessingTime) {

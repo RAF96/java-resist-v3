@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     implementation project(":Common")
-    implementation project(":ComputeServer")
+    implementation project(":CommonPartsOfComputeServer")
 }
 
 test {
