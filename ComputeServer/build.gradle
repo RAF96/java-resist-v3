@@ -5,6 +5,7 @@ plugins {
 group 'ru.ifmo.java'
 
 dependencies {
+    implementation project(":Common")
     implementation project(":CommonPartsOfComputeServer")
     implementation project(":IndividualThreadServer")
 }
