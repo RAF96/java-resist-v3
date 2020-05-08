@@ -16,60 +16,13 @@ public interface SettingsOfComplexTestingOfServerPerformance extends Iterable<Se
             int numberOfRequestPerClient,
             int clientSleepTime
     ) {
-        return new SettingsOfComplexTestingOfServerPerformance() {
-            @Override
-            @Nonnull
-            public Iterator<SettingsOfServerPerformanceTesting> iterator() {
-                return new Iterator<>() {
-                    int rangeIndex = 0;
-                    int sizeOfRequest;
-                    int numberOfClients;
-                    int clientSleepTime;
-
-                    {
-                        this.sizeOfRequest = sizeOfRequest;
-                        this.numberOfClients = numberOfClients;
-                        this.clientSleepTime = clientSleepTime;
-                    }
-
-                    @Override
-                    public boolean hasNext() {
-                        return rangeIndex != rangeOfVariableParameter.size();
-                    }
-
-                    @Override
-                    public SettingsOfServerPerformanceTesting next() {
-                        foo();
-                        SettingsOfServerPerformanceTesting settings = SettingsOfServerPerformanceTesting.create(
-                                serverType,
-                                numberOfClients,
-                                sizeOfRequest,
-                                numberOfRequestPerClient,
-                                clientSleepTime
-                        );
-                        rangeIndex += 1;
-                        return settings;
-                    }
-
-                    private void foo() {
-                        switch (typeOfVariableParameter) {
-                            case SIZE_OF_REQUEST:
-                                sizeOfRequest = rangeOfVariableParameter.get(rangeIndex);
-                            case CLIENT_SLEEP_TIME:
-                                clientSleepTime = rangeOfVariableParameter.get(rangeIndex);
-                                break;
-                            case NUMBER_OF_CLIENTS:
-                                numberOfClients = rangeOfVariableParameter.get(rangeIndex);
-                                break;
-                            default:
-                                throw new TypeOfVariableParameter.UnknownTypeOfVariableParameter();
-                        }
-                    }
-
-
-                };
-            }
-        };
+        return new SettingsOfComplexTestingOfServerPerformanceImpl(rangeOfVariableParameter,
+                typeOfVariableParameter,
+                serverType,
+                numberOfClients,
+                sizeOfRequest,
+                numberOfRequestPerClient,
+                clientSleepTime
+                );
     }
-
 }
