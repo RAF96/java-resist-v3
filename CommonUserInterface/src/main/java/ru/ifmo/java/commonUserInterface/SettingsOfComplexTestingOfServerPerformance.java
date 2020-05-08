@@ -34,7 +34,7 @@ public interface SettingsOfComplexTestingOfServerPerformance extends Iterable<Se
 
                     @Override
                     public boolean hasNext() {
-                        return rangeIndex == rangeOfVariableParameter.size();
+                        return rangeIndex != rangeOfVariableParameter.size();
                     }
 
                     @Override
