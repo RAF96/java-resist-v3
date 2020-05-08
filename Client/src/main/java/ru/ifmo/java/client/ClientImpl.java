@@ -33,15 +33,8 @@ public class ClientImpl implements Client {
            e.printStackTrace();
         }
         long currentTimeMillis = System.currentTimeMillis();
-        sendHaltRequest2ManagingServer();
         return ClientMetrics.create(numberOfSentRequest, currentTimeMillis - startTimeMillis);
     }
-
-    private void sendHaltRequest2ManagingServer() throws IOException {
-        Socket socket = new Socket(Constant.serverHost, Constant.computeServerPort);
-        RequestOfHaltingOfComputingServer.newBuilder().build().writeDelimitedTo(socket.getOutputStream());
-    }
-
 
     private Socket initSocket() throws InterruptedException {
         boolean isSocketReady = false;

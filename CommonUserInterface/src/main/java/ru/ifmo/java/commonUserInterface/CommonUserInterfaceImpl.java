@@ -75,14 +75,17 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
     }
 
     private void haltServer() throws IOException {
-        RequestOfHaltingOfComputingServer.newBuilder().build()
+        RequestOfHaltingOfComputingServer request = RequestOfHaltingOfComputingServer.newBuilder().build();
+        RequestOfComputingServer.newBuilder().setServerHalting(request).build()
                 .writeDelimitedTo(managingServerSocket.getOutputStream());
     }
 
     private void runServer(SettingsOfServerPerformanceTesting settings) throws IOException {
-        RequestOfComputingServerStartup.newBuilder()
+        RequestOfComputingServerStartup request = RequestOfComputingServerStartup.newBuilder()
                 .setNumberOfClients(settings.getNumberOfClients())
                 .setServerType(ServerType.serverType2ProtocolServerType(settings.getServerType()))
-                .build().writeDelimitedTo(managingServerSocket.getOutputStream());
+                .build();
+        RequestOfComputingServer.newBuilder().setServerStartup(request).build()
+                .writeDelimitedTo(managingServerSocket.getOutputStream());
     }
 }
