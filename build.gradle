@@ -10,6 +10,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation project(":ManagingServer")
+}
+
 application {
     mainClassName = "ru.ifmo.java.managingServer.ManagingServer"
 }
