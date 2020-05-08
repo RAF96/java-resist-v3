@@ -1,9 +1,7 @@
 syntax = "proto3";
 
 package ru.ifmo.java.common.protocol;
-message Request {
-    repeated int32 number = 1;
-}
+
 
 message RequestOfComputingServerStartup {
     enum ServerType {
@@ -18,11 +16,18 @@ message RequestOfComputingServerStartup {
 message RequestOfHaltingOfComputingServer {
 }
 
-message ResponseOfComputingServerStartup {
+message MetricsOfComputingServer {
     double requestProcessingTime = 1;
     double clientProcessingTime = 2;
 }
 
 message MessageWithListOfDoubleVariables {
     repeated double number = 1;
+}
+
+message RequestOfComputingServer {
+    oneof OneOf {
+        RequestOfComputingServerStartup serverStartup = 1;
+        RequestOfHaltingOfComputingServer serverHalting = 2;
+    }
 }

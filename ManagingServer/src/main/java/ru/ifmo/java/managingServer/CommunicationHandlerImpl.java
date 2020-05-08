@@ -8,9 +8,15 @@ import ru.ifmo.java.computeServer.ComputeServerCreator;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class CommunicationHandlerImpl implements CommunicationHandler {
     private final Socket socket;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private Future<ServerMetrics> future;
 
     public CommunicationHandlerImpl(Socket socket) {
         this.socket = socket;
@@ -18,37 +24,51 @@ public class CommunicationHandlerImpl implements CommunicationHandler {
 
     @Override
     public void run() {
-        while (!Thread.interrupted()) {
-            RequestOfComputingServerStartup request;
+        while (!Thread.interrupted() && !socket.isClosed()) {
+            RequestOfComputingServer request;
             try {
-                request = RequestOfComputingServerStartup.parseDelimitedFrom(socket.getInputStream());
+                request = RequestOfComputingServer.parseDelimitedFrom(socket.getInputStream());
             } catch (IOException e) {
                 e.printStackTrace();
                 break;
             }
-            ServerType serverType = ServerType.protocolServerType2ServerType(request.getServerType());
-            ServerMetrics serverMetrics;
-            try {
-                serverMetrics = runComputeServer(serverType, request.getNumberOfClients());
-            } catch (Exception e) {
-                e.printStackTrace();
-                break;
-            }
-            ResponseOfComputingServerStartup response = ResponseOfComputingServerStartup.newBuilder()
-                    .setRequestProcessingTime(serverMetrics.getRequestProcessingTime())
-                    .setClientProcessingTime(serverMetrics.getClientProcessingTime())
-                    .build();
-            try {
-                response.writeDelimitedTo(socket.getOutputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-                break;
+            switch (request.getOneOfCase()) {
+                case SERVERSTARTUP:
+                    ServerType serverType = ServerType.protocolServerType2ServerType(request.getServerStartup().getServerType());
+                    int numberOfClients = request.getServerStartup().getNumberOfClients();
+                    runComputeServer(serverType, numberOfClients);
+                    break;
+                case SERVERHALTING:
+                    ServerMetrics serverMetrics;
+                    try {
+                        serverMetrics = haltComputeServer();
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                    try {
+                        MetricsOfComputingServer.newBuilder()
+                                .setClientProcessingTime(serverMetrics.getClientProcessingTime())
+                                .setRequestProcessingTime(serverMetrics.getRequestProcessingTime())
+                                .build().writeDelimitedTo(socket.getOutputStream());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                    break;
+                default:
+                    throw new RuntimeException("Unknown type of request");
             }
         }
     }
 
-    private ServerMetrics runComputeServer(ServerType serverType, int numberOfClients) throws Exception {
+    private ServerMetrics haltComputeServer() throws ExecutionException, InterruptedException {
+        future.cancel(true);
+        return future.get();
+    }
+
+    private void runComputeServer(ServerType serverType, int numberOfClients) {
         ComputeServer computeServer = ComputeServerCreator.newComputeServer(serverType, numberOfClients);
-        return computeServer.call();
+        future = executorService.submit(computeServer);
     }
 }

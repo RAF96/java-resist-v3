@@ -5,19 +5,13 @@ import ru.ifmo.java.client.ClientMetrics;
 import ru.ifmo.java.client.ClientSettings;
 import ru.ifmo.java.common.Constant;
 import ru.ifmo.java.common.ServerType;
-import ru.ifmo.java.common.protocol.Protocol.RequestOfComputingServerStartup;
-import ru.ifmo.java.common.protocol.Protocol.ResponseOfComputingServerStartup;
+import ru.ifmo.java.common.protocol.Protocol.*;
 import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.OptionalDouble;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class CommonUserInterfaceImpl implements CommonUserInterface {
     private final Socket managingServerSocket;
@@ -33,52 +27,56 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
             for (var settingsOfTesting : settingsOfComplexTesting) {
                 list.add(testServerPerformance(settingsOfTesting));
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return AggregateServerPerformanceMetrics.create(list);
     }
 
-    private ServerPerformanceMetrics testServerPerformance(SettingsOfServerPerformanceTesting settings) throws IOException {
+    private ServerPerformanceMetrics testServerPerformance(SettingsOfServerPerformanceTesting settings) throws IOException, ExecutionException, InterruptedException {
         runServer(settings);
-        ClientMetrics clientMetrics = runClient(settings);
+        ClientMetrics clientMetrics = runClients(settings);
         ServerMetrics serverMetrics = getManagingServerResponse();
         return ServerPerformanceMetrics.create(serverMetrics.getRequestProcessingTime(), serverMetrics.getClientProcessingTime(), clientMetrics.getAverageTimeSpendByClient());
     }
 
     private ServerMetrics getManagingServerResponse() throws IOException {
-        ResponseOfComputingServerStartup response = ResponseOfComputingServerStartup.parseDelimitedFrom(managingServerSocket.getInputStream());
+        MetricsOfComputingServer response = MetricsOfComputingServer.parseDelimitedFrom(managingServerSocket.getInputStream());
         return ServerMetrics.create(response.getRequestProcessingTime(), response.getClientProcessingTime());
     }
 
-    private ClientMetrics runClient(SettingsOfServerPerformanceTesting settings) {
+    private ClientMetrics runClients(SettingsOfServerPerformanceTesting settings)
+            throws InterruptedException, ExecutionException, IOException {
         ExecutorService executorService = Executors.newFixedThreadPool(settings.getNumberOfClients());
+        CompletionService<ClientMetrics> completionService = new ExecutorCompletionService<>(executorService);
         ClientSettings clientSettings = ClientSettings.create(settings.getServerType(),
                 settings.getSizeOfRequest(),
                 settings.getNumberOfRequestPerClient(),
                 settings.getClientSleepTime());
-        List<Future<ClientMetrics>> futures = new ArrayList<>();
+
         for (int index = 0; index < settings.getNumberOfClients(); index++) {
             Client client = Client.create(clientSettings);
-            futures.add(executorService.submit(client));
+            completionService.submit(client);
         }
-        List<ClientMetrics> clientMetricsList = new ArrayList<>();
-        for (var future : futures) {
-            // FIXME. is it right way catching exception?
-            ClientMetrics clientMetrics = null;
-            boolean success = false;
-            try {
-                clientMetrics = future.get();
-                success = true;
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-            if (success) {
-                clientMetricsList.add(clientMetrics);
-            }
+        Future<ClientMetrics> future = completionService.take();
+        ClientMetrics firstClientMetrics = future.get();
+        haltServer();
+
+        List<ClientMetrics> clientMetricsList = new ArrayList<>(
+                Collections.singletonList(firstClientMetrics)
+        );
+        for (int index = 0; index < settings.getNumberOfClients() - 1; index++) {
+            future = completionService.take();
+            ClientMetrics clientMetrics = future.get();
+            clientMetricsList.add(clientMetrics);
         }
         OptionalDouble average = clientMetricsList.stream().mapToDouble(ClientMetrics::getAverageTimeSpendByClient).average();
-        return ClientMetrics.create(average.orElse(0));
+        return ClientMetrics.create(average.orElseThrow());
+    }
+
+    private void haltServer() throws IOException {
+        RequestOfHaltingOfComputingServer.newBuilder().build()
+                .writeDelimitedTo(managingServerSocket.getOutputStream());
     }
 
     private void runServer(SettingsOfServerPerformanceTesting settings) throws IOException {
