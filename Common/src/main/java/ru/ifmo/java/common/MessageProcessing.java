@@ -24,7 +24,7 @@ public interface MessageProcessing {
     }
 
     static private byte[] readNBytes(InputStream inputStream, int n) throws IOException {
-        byte[] bytes = new byte[4];
+        byte[] bytes = new byte[n];
         int numberOfActuallyReadBytes = inputStream.read(bytes);
         assert numberOfActuallyReadBytes == n;
         return bytes;
