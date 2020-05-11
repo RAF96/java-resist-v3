@@ -40,7 +40,7 @@ public class SystemTests {
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,
                 ServerType.INDIVIDUAL_THREAD_SERVER,
                 1,
-                1000,
+                5,
                 1,
                 0
         );

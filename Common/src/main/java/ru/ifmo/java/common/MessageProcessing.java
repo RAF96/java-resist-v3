@@ -7,10 +7,9 @@ import java.nio.ByteBuffer;
 public interface MessageProcessing {
 
     static byte[] packMessage(byte[] array) {
-        ByteBuffer length = ByteBuffer.allocate(4).putInt(array.length);
-        ByteBuffer message = ByteBuffer.wrap(array);
-        return ByteBuffer.allocate(length.capacity() + message.capacity())
-                .put(length).put(message).array();
+        byte[] length = ByteBuffer.allocate(4).putInt(array.length).array();
+        return ByteBuffer.allocate(4 + array.length)
+                .put(length).put(array).array();
     }
 
     //FIXME. maybe it's unnecessary
@@ -19,7 +18,8 @@ public interface MessageProcessing {
     }
 
     static byte[] readPackedMessage(InputStream inputStream) throws IOException {
-        int size = ByteBuffer.wrap(readNBytes(inputStream, 4)).getInt();
+        byte[] bytes = readNBytes(inputStream, 4);
+        int size = ByteBuffer.wrap(bytes).getInt();
         return readNBytes(inputStream, size);
     }
 
