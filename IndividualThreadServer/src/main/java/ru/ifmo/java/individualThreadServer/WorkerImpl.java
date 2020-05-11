@@ -44,6 +44,8 @@ public class WorkerImpl implements Worker {
                 x.setClientProcessingEnd(System.currentTimeMillis());
                 return x;
             });
+            byte[] response = MessageWithListOfDoubleVariables.newBuilder().addAllNumber(list).build().toByteArray();
+            socket.getOutputStream().write(MessageProcessing.packMessage(response));
             serverMetricsList.add(serverMetrics4Initializer.apply(ServerMetrics4.create()));
         }
         return serverMetricsList;
