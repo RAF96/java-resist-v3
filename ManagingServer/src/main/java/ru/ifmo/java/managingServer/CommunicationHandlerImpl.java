@@ -24,40 +24,48 @@ public class CommunicationHandlerImpl implements CommunicationHandler {
 
     @Override
     public void run() {
-        while (!Thread.interrupted() && !socket.isClosed()) {
-            RequestOfComputingServer request;
+        try {
+            while (!Thread.interrupted() && !socket.isClosed()) {
+                RequestOfComputingServer request;
+                try {
+                    request = RequestOfComputingServer.parseDelimitedFrom(socket.getInputStream());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    break;
+                }
+                switch (request.getOneOfCase()) {
+                    case SERVERSTARTUP:
+                        ServerType serverType = ServerType.protocolServerType2ServerType(request.getServerStartup().getServerType());
+                        int numberOfClients = request.getServerStartup().getNumberOfClients();
+                        runComputeServer(serverType, numberOfClients);
+                        break;
+                    case SERVERHALTING:
+                        ServerMetrics serverMetrics;
+                        try {
+                            serverMetrics = haltComputeServer();
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                            break;
+                        }
+                        try {
+                            MetricsOfComputingServer.newBuilder()
+                                    .setClientProcessingTime(serverMetrics.getClientProcessingTime())
+                                    .setRequestProcessingTime(serverMetrics.getRequestProcessingTime())
+                                    .build().writeDelimitedTo(socket.getOutputStream());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            break;
+                        }
+                        break;
+                    default:
+                        throw new RuntimeException("Unknown type of request");
+                }
+            }
+        } finally {
             try {
-                request = RequestOfComputingServer.parseDelimitedFrom(socket.getInputStream());
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                break;
-            }
-            switch (request.getOneOfCase()) {
-                case SERVERSTARTUP:
-                    ServerType serverType = ServerType.protocolServerType2ServerType(request.getServerStartup().getServerType());
-                    int numberOfClients = request.getServerStartup().getNumberOfClients();
-                    runComputeServer(serverType, numberOfClients);
-                    break;
-                case SERVERHALTING:
-                    ServerMetrics serverMetrics;
-                    try {
-                        serverMetrics = haltComputeServer();
-                    } catch (ExecutionException | InterruptedException e) {
-                        e.printStackTrace();
-                        break;
-                    }
-                    try {
-                        MetricsOfComputingServer.newBuilder()
-                                .setClientProcessingTime(serverMetrics.getClientProcessingTime())
-                                .setRequestProcessingTime(serverMetrics.getRequestProcessingTime())
-                                .build().writeDelimitedTo(socket.getOutputStream());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        break;
-                    }
-                    break;
-                default:
-                    throw new RuntimeException("Unknown type of request");
             }
         }
     }

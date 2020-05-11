@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":Common")
+    implementation project(":CommonUserInterface")
+    implementation project(":ManagingServer")
+    implementation 'org.jetbrains:annotations:16.0.2'
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+}
+
+test {
+    useJUnitPlatform()
+}

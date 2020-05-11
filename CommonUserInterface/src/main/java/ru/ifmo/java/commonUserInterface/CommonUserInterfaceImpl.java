@@ -35,6 +35,8 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
 
     private ServerPerformanceMetrics testServerPerformance(SettingsOfServerPerformanceTesting settings) throws IOException, ExecutionException, InterruptedException {
         runServer(settings);
+        //FIXME. Magic const
+        Thread.sleep(1000);
         ClientMetrics clientMetrics = runClients(settings);
         ServerMetrics serverMetrics = getManagingServerResponse();
         return ServerPerformanceMetrics.create(serverMetrics.getRequestProcessingTime(), serverMetrics.getClientProcessingTime(), clientMetrics.getAverageTimeSpendByClient());

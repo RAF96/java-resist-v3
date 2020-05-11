@@ -13,15 +13,13 @@ public class ManagingServerImpl implements ManagingServer {
     @Override
     public void run() {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        while (!Thread.interrupted()) {
-            try (ServerSocket serverSocket = new ServerSocket(Constant.managingServerPort)) {
-                try (Socket socket = serverSocket.accept()) {
-                    executorService.submit(CommunicationHandler.create(socket));
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                break;
+        try (ServerSocket serverSocket = new ServerSocket(Constant.managingServerPort)) {
+            while (!Thread.interrupted()) {
+                Socket socket = serverSocket.accept();
+                executorService.submit(CommunicationHandler.create(socket));
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
