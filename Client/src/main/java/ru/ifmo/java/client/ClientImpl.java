@@ -1,10 +1,14 @@
 package ru.ifmo.java.client;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import ru.ifmo.java.common.Constant;
 import ru.ifmo.java.common.MessageProcessing;
+import ru.ifmo.java.common.protocol.Protocol;
 import ru.ifmo.java.common.protocol.Protocol.*;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,6 +17,8 @@ public class ClientImpl implements Client {
     private final ClientSettings clientSettings;
     private final Random random = new Random();
     private Socket socket;
+    private InputStream inputStream;
+    private OutputStream outputStream;
 
     public ClientImpl(ClientSettings clientSettings) {
         assert clientSettings.getNumberOfRequest() > 0;
@@ -20,15 +26,24 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public ClientMetrics call() throws Exception {
+    public ClientMetrics call() throws InterruptedException {
         long startTimeMillis = System.currentTimeMillis();
         int numberOfSentRequest = 0;
-        socket = initSocket();
-        for (;numberOfSentRequest < clientSettings.getNumberOfRequest(); numberOfSentRequest++) {
-            processingOneRequest();
-            Thread.sleep(clientSettings.getClientSleepTime());
+        try {
+            socket = initSocket();
+            inputStream = socket.getInputStream();
+            outputStream = socket.getOutputStream();
+            for (; numberOfSentRequest < clientSettings.getNumberOfRequest(); numberOfSentRequest++) {
+                processingOneRequest();
+                Thread.sleep(clientSettings.getClientSleepTime());
+            }
+        } catch (IOException ignored) {
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException ignored) {
+            }
         }
-        socket.close();
         long currentTimeMillis = System.currentTimeMillis();
         return ClientMetrics.create(numberOfSentRequest, currentTimeMillis - startTimeMillis);
     }
@@ -54,10 +69,15 @@ public class ClientImpl implements Client {
         List<Double> list = random.doubles(clientSettings.getSizeOfRequest()).boxed().collect(Collectors.toList());
         MessageWithListOfDoubleVariables message = MessageWithListOfDoubleVariables.newBuilder().addAllNumber(list).build();
         byte[] packMessage = MessageProcessing.packMessage(message.toByteArray());
-        socket.getOutputStream().write(packMessage);
+        outputStream.write(packMessage);
         // waitResponse
-        byte[] responseInBytes = MessageProcessing.readPackedMessage(socket.getInputStream());
-        MessageWithListOfDoubleVariables response = MessageWithListOfDoubleVariables.parseFrom(responseInBytes);
+        byte[] responseInBytes = MessageProcessing.readPackedMessage(inputStream);
+        MessageWithListOfDoubleVariables response;
+        try {
+            response = MessageWithListOfDoubleVariables.parseFrom(responseInBytes);
+        } catch (InvalidProtocolBufferException e) {
+            throw new RuntimeException(e);
+        }
         Collections.sort(list);
         assert Arrays.equals(response.getNumberList().toArray(), list.toArray());
     }

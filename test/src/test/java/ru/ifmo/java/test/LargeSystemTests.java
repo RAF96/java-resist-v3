@@ -2,7 +2,6 @@ package ru.ifmo.java.test;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.commonUserInterface.AggregateServerPerformanceMetrics;
@@ -17,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class SystemTests {
+public class LargeSystemTests {
     private final static ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static Future<?> futureOfManagingServer;
     private static CommonUserInterface commonUserInterface;
@@ -35,15 +34,15 @@ public class SystemTests {
         futureOfManagingServer.cancel(true);
     }
 
-    @RepeatedTest(2)
+    @Test
     public void runSimpleTestWithOneUser() throws IOException {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
                 Collections.singletonList(0),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,
                 ServerType.INDIVIDUAL_THREAD_SERVER,
-                1,
-                5,
-                1,
+                10,
+                5000,
+                10,
                 0
         );
         AggregateServerPerformanceMetrics metrics = commonUserInterface.runComplexTestingOfServerPerformance(settings);
@@ -54,20 +53,5 @@ public class SystemTests {
         System.out.println(metrics.getRequestProcessingTime());
         System.out.println(metrics.getClientProcessingTime());
         System.out.println(metrics.getAverageTimeSpendByClient());
-    }
-
-    @RepeatedTest(2)
-    public void runSimpleTestWithTwoUsers() throws IOException {
-        SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
-                Collections.singletonList(0),
-                TypeOfVariableParameter.CLIENT_SLEEP_TIME,
-                ServerType.INDIVIDUAL_THREAD_SERVER,
-                2,
-                5,
-                1,
-                0
-        );
-        AggregateServerPerformanceMetrics metrics = commonUserInterface.runComplexTestingOfServerPerformance(settings);
-        printMetrics(metrics);
     }
 }
