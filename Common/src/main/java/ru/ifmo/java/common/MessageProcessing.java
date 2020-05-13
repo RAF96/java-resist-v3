@@ -26,8 +26,13 @@ public interface MessageProcessing {
     static private byte[] readNBytes(InputStream inputStream, int n) throws IOException {
         byte[] bytes = new byte[n];
         int numberOfActuallyReadBytes = inputStream.read(bytes);
+        if (numberOfActuallyReadBytes == -1) {
+            throw new ClosedSocket();
+        }
         assert numberOfActuallyReadBytes == n;
         return bytes;
     }
+
+    class ClosedSocket extends IOException{}
 
 }

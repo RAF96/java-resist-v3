@@ -25,14 +25,12 @@ public class ClientImpl implements Client {
         long startTimeMillis = System.currentTimeMillis();
         socket = initSocket();
         int numberOfSentRequest = 0;
-        try {
-            for (;numberOfSentRequest < clientSettings.getNumberOfRequest(); numberOfSentRequest++) {
-                processingOneRequest();
-            }
-        } catch (IOException e) {
-           e.printStackTrace();
+        for (;numberOfSentRequest < clientSettings.getNumberOfRequest(); numberOfSentRequest++) {
+            processingOneRequest();
+            Thread.sleep(clientSettings.getClientSleepTime());
         }
         long currentTimeMillis = System.currentTimeMillis();
+        socket.close();
         return ClientMetrics.create(numberOfSentRequest, currentTimeMillis - startTimeMillis);
     }
 

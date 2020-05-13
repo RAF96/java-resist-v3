@@ -1,8 +1,8 @@
 package ru.ifmo.java.client;
 
 public interface ClientMetrics {
-    static ClientMetrics create(int numberOfSendedRequests, double timeOfWork) {
-        return () -> timeOfWork / numberOfSendedRequests;
+    static ClientMetrics create(int numberOfSentRequests, double timeOfWork) {
+        return () -> timeOfWork / numberOfSentRequests;
     }
 
 

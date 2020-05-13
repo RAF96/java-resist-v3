@@ -10,7 +10,7 @@ public class Sort {
         int i = 0;
 
         while (i + 1 < array.length) {
-            if (array[i] < array[i + 1]) {
+            if (array[i] > array[i + 1]) {
                 double c = array[i];
                 array[i] = array[i + 1];
                 array[i + 1] = c;

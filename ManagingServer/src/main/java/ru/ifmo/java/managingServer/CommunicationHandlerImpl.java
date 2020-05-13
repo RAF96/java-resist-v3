@@ -7,19 +7,21 @@ import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics;
 import ru.ifmo.java.computeServer.ComputeServerCreator;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class CommunicationHandlerImpl implements CommunicationHandler {
     private final Socket socket;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private Future<ServerMetrics> future;
+    private final InputStream inputStream;
+    private final OutputStream outputStream;
+    private Thread thread;
+    private ComputeServer computeServer;
 
-    public CommunicationHandlerImpl(Socket socket) {
+    public CommunicationHandlerImpl(Socket socket) throws IOException {
         this.socket = socket;
+        inputStream = socket.getInputStream();
+        outputStream = socket.getOutputStream();
     }
 
     @Override
@@ -28,7 +30,7 @@ public class CommunicationHandlerImpl implements CommunicationHandler {
             while (!Thread.interrupted() && !socket.isClosed()) {
                 RequestOfComputingServer request;
                 try {
-                    request = RequestOfComputingServer.parseDelimitedFrom(socket.getInputStream());
+                    request = RequestOfComputingServer.parseDelimitedFrom(inputStream);
                 } catch (IOException e) {
                     e.printStackTrace();
                     break;
@@ -42,16 +44,18 @@ public class CommunicationHandlerImpl implements CommunicationHandler {
                     case SERVERHALTING:
                         ServerMetrics serverMetrics;
                         try {
-                            serverMetrics = haltComputeServer();
-                        } catch (ExecutionException | InterruptedException e) {
+                            thread.interrupt();
+                            thread.join();
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                             break;
                         }
+                        serverMetrics = computeServer.getServerMetrics();
                         try {
                             MetricsOfComputingServer.newBuilder()
                                     .setClientProcessingTime(serverMetrics.getClientProcessingTime())
                                     .setRequestProcessingTime(serverMetrics.getRequestProcessingTime())
-                                    .build().writeDelimitedTo(socket.getOutputStream());
+                                    .build().writeDelimitedTo(outputStream);
                         } catch (IOException e) {
                             e.printStackTrace();
                             break;
@@ -70,13 +74,10 @@ public class CommunicationHandlerImpl implements CommunicationHandler {
         }
     }
 
-    private ServerMetrics haltComputeServer() throws ExecutionException, InterruptedException {
-        future.cancel(true);
-        return future.get();
-    }
 
     private void runComputeServer(ServerType serverType, int numberOfClients) {
-        ComputeServer computeServer = ComputeServerCreator.newComputeServer(serverType, numberOfClients);
-        future = executorService.submit(computeServer);
+        computeServer = ComputeServerCreator.newComputeServer(serverType, numberOfClients);
+        thread = new Thread(computeServer, "computeServer");
+        thread.start();
     }
 }
