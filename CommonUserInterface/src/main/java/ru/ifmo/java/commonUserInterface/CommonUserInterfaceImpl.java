@@ -51,6 +51,7 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
     private void runServer(SettingsOfServerPerformanceTesting settings) throws IOException {
         RequestOfComputingServerStartup request = RequestOfComputingServerStartup.newBuilder()
                 .setNumberOfClients(settings.getNumberOfClients())
+                .setNumberOfRequests(settings.getNumberOfRequestPerClient())
                 .setServerType(ServerType.serverType2ProtocolServerType(settings.getServerType()))
                 .build();
         RequestOfComputingServer.newBuilder().setServerStartup(request).build()

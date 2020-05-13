@@ -19,10 +19,12 @@ import java.util.concurrent.Future;
 public class SystemTests {
     private final static ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static Future<?> futureOfManagingServer;
+    private static CommonUserInterface commonUserInterface;
 
     @BeforeAll
-    private static void runManagingServer() throws InterruptedException {
+    private static void runManagingServer() throws InterruptedException, IOException {
         futureOfManagingServer = executorService.submit(ManagingServer.create());
+        commonUserInterface = CommonUserInterface.create();
         //FIXME. magic const
         Thread.sleep(1000);
     }
@@ -33,8 +35,7 @@ public class SystemTests {
     }
 
     @Test
-    public void runSimpleTestOfComplexTestingOfServerPerformance() throws IOException {
-        CommonUserInterface commonUserInterface = CommonUserInterface.create();
+    public void runSimpleTestWithOneUser() throws IOException {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
                 Collections.singletonList(0),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,
@@ -45,5 +46,27 @@ public class SystemTests {
                 0
         );
         AggregateServerPerformanceMetrics metrics = commonUserInterface.runComplexTestingOfServerPerformance(settings);
+        printMetrics(metrics);
+    }
+
+    private void printMetrics(AggregateServerPerformanceMetrics metrics) {
+        System.out.println(metrics.getRequestProcessingTime());
+        System.out.println(metrics.getClientProcessingTime());
+        System.out.println(metrics.getAverageTimeSpendByClient());
+    }
+
+    @Test
+    public void repeatRunSimpleTestWithOneUsers() throws IOException {
+        SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
+                Collections.singletonList(0),
+                TypeOfVariableParameter.CLIENT_SLEEP_TIME,
+                ServerType.INDIVIDUAL_THREAD_SERVER,
+                1,
+                5,
+                1,
+                0
+        );
+        AggregateServerPerformanceMetrics metrics = commonUserInterface.runComplexTestingOfServerPerformance(settings);
+        printMetrics(metrics);
     }
 }

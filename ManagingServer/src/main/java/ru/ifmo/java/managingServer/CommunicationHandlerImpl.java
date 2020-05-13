@@ -3,6 +3,7 @@ package ru.ifmo.java.managingServer;
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.common.protocol.Protocol.*;
 import ru.ifmo.java.commonPartsOfComputeServer.ComputeServer;
+import ru.ifmo.java.commonPartsOfComputeServer.ComputeServerSettings;
 import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics;
 import ru.ifmo.java.computeServer.ComputeServerCreator;
 
@@ -39,7 +40,10 @@ public class CommunicationHandlerImpl implements CommunicationHandler {
                     case SERVERSTARTUP:
                         ServerType serverType = ServerType.protocolServerType2ServerType(request.getServerStartup().getServerType());
                         int numberOfClients = request.getServerStartup().getNumberOfClients();
-                        runComputeServer(serverType, numberOfClients);
+                        int numberOfRequest = request.getServerStartup().getNumberOfRequests();
+                        ComputeServerSettings computeServerSettings =
+                                ComputeServerSettings.create(numberOfClients, numberOfRequest);
+                        runComputeServer(serverType, computeServerSettings);
                         break;
                     case SERVERHALTING:
                         ServerMetrics serverMetrics;
@@ -75,8 +79,8 @@ public class CommunicationHandlerImpl implements CommunicationHandler {
     }
 
 
-    private void runComputeServer(ServerType serverType, int numberOfClients) {
-        computeServer = ComputeServerCreator.newComputeServer(serverType, numberOfClients);
+    private void runComputeServer(ServerType serverType, ComputeServerSettings computeServerSettings) {
+        computeServer = ComputeServerCreator.newComputeServer(serverType, computeServerSettings);
         thread = new Thread(computeServer, "computeServer");
         thread.start();
     }

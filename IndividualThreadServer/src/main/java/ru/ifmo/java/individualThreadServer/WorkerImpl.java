@@ -40,7 +40,8 @@ public class WorkerImpl implements Worker {
         }
         List<ServerMetrics> serverMetricsList = new ArrayList<>();
         int index = 0;
-        for (; !Thread.interrupted() && !socket.isClosed(); ++index) {
+        for (; index < computeServerSettings.getNumberOfRequest() &&
+                !Thread.interrupted() && !socket.isClosed(); ++index) {
             byte[] bytes;
             try {
                 bytes = MessageProcessing.readPackedMessage(socket.getInputStream());

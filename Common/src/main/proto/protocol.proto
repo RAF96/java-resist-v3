@@ -11,6 +11,7 @@ message RequestOfComputingServerStartup {
     }
     ServerType serverType = 1;
     int32 numberOfClients = 2;
+    int32 numberOfRequests = 3;
 }
 
 message RequestOfHaltingOfComputingServer {

@@ -23,14 +23,14 @@ public class ClientImpl implements Client {
     @Override
     public ClientMetrics call() throws Exception {
         long startTimeMillis = System.currentTimeMillis();
-        socket = initSocket();
         int numberOfSentRequest = 0;
-        for (;numberOfSentRequest < clientSettings.getNumberOfRequest(); numberOfSentRequest++) {
-            processingOneRequest();
-            Thread.sleep(clientSettings.getClientSleepTime());
+        try (Socket socket = initSocket()) {
+            for (;numberOfSentRequest < clientSettings.getNumberOfRequest(); numberOfSentRequest++) {
+                processingOneRequest();
+                Thread.sleep(clientSettings.getClientSleepTime());
+            }
         }
         long currentTimeMillis = System.currentTimeMillis();
-        socket.close();
         return ClientMetrics.create(numberOfSentRequest, currentTimeMillis - startTimeMillis);
     }
 
