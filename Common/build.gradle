@@ -20,6 +20,9 @@ buildscript {
 }
 
 dependencies {
+    implementation 'org.jetbrains:annotations:16.0.2'
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
     compile 'com.google.protobuf:protobuf-java:3.11.0'
     compile 'io.grpc:grpc-stub:1.0.0-pre2'
     compile 'io.grpc:grpc-protobuf:1.0.0-pre2'
@@ -52,4 +55,8 @@ protobuf {
             grpc { }
         }
     }
+}
+
+test {
+    useJUnitPlatform()
 }
