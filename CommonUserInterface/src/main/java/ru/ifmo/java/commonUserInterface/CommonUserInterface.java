@@ -1,6 +1,7 @@
 package ru.ifmo.java.commonUserInterface;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 public interface CommonUserInterface {
 
@@ -8,5 +9,5 @@ public interface CommonUserInterface {
         return new CommonUserInterfaceImpl();
     }
 
-    AggregateServerPerformanceMetrics runComplexTestingOfServerPerformance(SettingsOfComplexTestingOfServerPerformance settings);
+    AggregateServerPerformanceMetrics runComplexTestingOfServerPerformance(SettingsOfComplexTestingOfServerPerformance settings) throws InterruptedException, ExecutionException, IOException;
 }

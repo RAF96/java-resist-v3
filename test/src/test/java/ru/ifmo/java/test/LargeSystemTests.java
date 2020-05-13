@@ -1,8 +1,6 @@
 package ru.ifmo.java.test;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.commonUserInterface.AggregateServerPerformanceMetrics;
 import ru.ifmo.java.commonUserInterface.CommonUserInterface;
@@ -12,6 +10,7 @@ import ru.ifmo.java.managingServer.ManagingServer;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -35,7 +34,8 @@ public class LargeSystemTests {
     }
 
     @Test
-    public void runSimpleTestWithOneUser() throws IOException {
+    @Timeout(5000)
+    public void runSimpleTestWithOneUser() throws IOException, ExecutionException, InterruptedException {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
                 Collections.singletonList(0),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,

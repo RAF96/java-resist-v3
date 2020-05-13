@@ -13,6 +13,7 @@ import ru.ifmo.java.managingServer.ManagingServer;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -36,7 +37,7 @@ public class SystemTests {
     }
 
     @RepeatedTest(2)
-    public void runSimpleTestWithOneUser() throws IOException {
+    public void runSimpleTestWithOneUser() throws IOException, ExecutionException, InterruptedException {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
                 Collections.singletonList(0),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,
@@ -57,7 +58,7 @@ public class SystemTests {
     }
 
     @RepeatedTest(2)
-    public void runSimpleTestWithTwoUsers() throws IOException {
+    public void runSimpleTestWithTwoUsers() throws IOException, ExecutionException, InterruptedException {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
                 Collections.singletonList(0),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,

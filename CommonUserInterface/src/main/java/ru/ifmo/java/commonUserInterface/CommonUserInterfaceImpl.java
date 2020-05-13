@@ -27,14 +27,10 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
     }
 
     @Override
-    public AggregateServerPerformanceMetrics runComplexTestingOfServerPerformance(SettingsOfComplexTestingOfServerPerformance settingsOfComplexTesting) {
+    public AggregateServerPerformanceMetrics runComplexTestingOfServerPerformance(SettingsOfComplexTestingOfServerPerformance settingsOfComplexTesting) throws InterruptedException, ExecutionException, IOException {
         List<ServerPerformanceMetrics> list = new ArrayList<>();
-        try {
-            for (var settingsOfTesting : settingsOfComplexTesting) {
-                list.add(testServerPerformance(settingsOfTesting));
-            }
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        for (var settingsOfTesting : settingsOfComplexTesting) {
+            list.add(testServerPerformance(settingsOfTesting));
         }
         return AggregateServerPerformanceMetrics.create(list);
     }

@@ -12,11 +12,6 @@ public interface MessageProcessing {
                 .put(length).put(array).array();
     }
 
-    //FIXME. maybe it's unnecessary
-    static byte[] unpackMessage(byte[] array) {
-        return null;
-    }
-
     static byte[] readPackedMessage(InputStream inputStream) throws IOException {
         byte[] bytes = readNBytes(inputStream, 4);
         int size = ByteBuffer.wrap(bytes).getInt();
