@@ -62,7 +62,7 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
             throws InterruptedException, ExecutionException, IOException {
         ExecutorService executorService = Executors.newFixedThreadPool(settings.getNumberOfClients());
         CompletionService<ClientMetrics> completionService = new ExecutorCompletionService<>(executorService);
-        ClientSettings clientSettings = ClientSettings.create(settings.getServerType(),
+        ClientSettings clientSettings = ClientSettings.create(
                 settings.getSizeOfRequest(),
                 settings.getNumberOfRequestPerClient(),
                 settings.getClientSleepTime());

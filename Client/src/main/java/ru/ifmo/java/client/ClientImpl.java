@@ -7,7 +7,6 @@ import ru.ifmo.java.common.protocol.Protocol.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 public class ClientImpl implements Client {
@@ -24,12 +23,12 @@ public class ClientImpl implements Client {
     public ClientMetrics call() throws Exception {
         long startTimeMillis = System.currentTimeMillis();
         int numberOfSentRequest = 0;
-        try (Socket socket = initSocket()) {
-            for (;numberOfSentRequest < clientSettings.getNumberOfRequest(); numberOfSentRequest++) {
-                processingOneRequest();
-                Thread.sleep(clientSettings.getClientSleepTime());
-            }
+        socket = initSocket();
+        for (;numberOfSentRequest < clientSettings.getNumberOfRequest(); numberOfSentRequest++) {
+            processingOneRequest();
+            Thread.sleep(clientSettings.getClientSleepTime());
         }
+        socket.close();
         long currentTimeMillis = System.currentTimeMillis();
         return ClientMetrics.create(numberOfSentRequest, currentTimeMillis - startTimeMillis);
     }

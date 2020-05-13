@@ -3,15 +3,10 @@ package ru.ifmo.java.client;
 import ru.ifmo.java.common.ServerType;
 
 public interface ClientSettings {
-    static ClientSettings create(ServerType serverType,
-                                 int sizeOfRequest,
+    static ClientSettings create(int sizeOfRequest,
                                  int numberOfRequest,
                                  int clientSleepTime) {
         return new ClientSettings() {
-            @Override
-            public ServerType getServerType() {
-                return serverType;
-            }
 
             @Override
             public int getSizeOfRequest() {
@@ -29,8 +24,6 @@ public interface ClientSettings {
             }
         };
     }
-
-    ServerType getServerType();
 
     int getSizeOfRequest();
 
