@@ -62,18 +62,12 @@ public class WorkerImpl implements Worker {
                     e.printStackTrace();
                     break;
                 }
-                Function<ServerMetrics4, ServerMetrics4> serverMetrics4Initializer = (ServerMetrics4 x) -> {
-                    x.setClientProcessingStart(System.currentTimeMillis());
-                    x.setRequestProcessingStart(System.currentTimeMillis());
-                    return x;
-                };
+                ServerMetrics4 serverMetrics4 = ServerMetrics4.create();
+                serverMetrics4.setClientProcessingStart(System.currentTimeMillis());
+                serverMetrics4.setRequestProcessingStart(System.currentTimeMillis());
                 List<Double> list = Sort.sort(numberList);
-                serverMetrics4Initializer = serverMetrics4Initializer.andThen((ServerMetrics4 x) ->
-                {
-                    x.setRequestProcessingEnd(System.currentTimeMillis());
-                    x.setClientProcessingEnd(System.currentTimeMillis());
-                    return x;
-                });
+                serverMetrics4.setRequestProcessingEnd(System.currentTimeMillis());
+                serverMetrics4.setClientProcessingEnd(System.currentTimeMillis());
                 byte[] response = MessageWithListOfDoubleVariables.newBuilder().addAllNumber(list).build().toByteArray();
                 try {
                     outputStream.write(MessageProcessing.packMessage(response));
@@ -81,7 +75,7 @@ public class WorkerImpl implements Worker {
                     e.printStackTrace();
                     break;
                 }
-                serverMetricsList.add(serverMetrics4Initializer.apply(ServerMetrics4.create()));
+                serverMetricsList.add(serverMetrics4);
             }
             averageServerMetrics = AverageServerMetrics.create(
                     serverMetricsList.stream().mapToDouble(ServerMetrics::getRequestProcessingTime).sum(),

@@ -102,4 +102,18 @@ public class SystemTests {
         AggregateServerPerformanceMetrics metrics = commonUserInterface.runComplexTestingOfServerPerformance(settings);
         printMetrics(metrics);
     }
+
+    public void runSimpleTestWithOneUserAndLargeMessage() throws IOException, ExecutionException, InterruptedException {
+        SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
+                Collections.singletonList(0),
+                TypeOfVariableParameter.CLIENT_SLEEP_TIME,
+                ServerType.INDIVIDUAL_THREAD_SERVER,
+                1,
+                5000,
+                1,
+                0
+        );
+        AggregateServerPerformanceMetrics metrics = commonUserInterface.runComplexTestingOfServerPerformance(settings);
+        printMetrics(metrics);
+    }
 }

@@ -9,6 +9,7 @@ import ru.ifmo.java.commonUserInterface.TypeOfVariableParameter;
 import ru.ifmo.java.managingServer.ManagingServer;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -34,10 +35,10 @@ public class LargeSystemTests {
     }
 
     @Test
-    @Timeout(5000)
+    @Timeout(20)
     public void runSimpleTestWithOneUser() throws IOException, ExecutionException, InterruptedException {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
-                Collections.singletonList(0),
+                Arrays.asList(0, 100, 200),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,
                 ServerType.INDIVIDUAL_THREAD_SERVER,
                 10,

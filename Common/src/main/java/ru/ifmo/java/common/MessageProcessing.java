@@ -20,13 +20,17 @@ public interface MessageProcessing {
 
     static private byte[] readNBytes(InputStream inputStream, int expectedNumberOfReadBytes) throws IOException {
         byte[] bytes = new byte[expectedNumberOfReadBytes];
-        int numberOfActuallyReadBytes = inputStream.read(bytes);
-        if (numberOfActuallyReadBytes == -1) {
-            throw new ClosedSocket();
+        int sumNumberOfActuallyReadBytes = 0;
+        while (sumNumberOfActuallyReadBytes < expectedNumberOfReadBytes) {
+            int numberOfActuallyReadBytes = inputStream.read(bytes, sumNumberOfActuallyReadBytes, expectedNumberOfReadBytes - sumNumberOfActuallyReadBytes);
+            sumNumberOfActuallyReadBytes += numberOfActuallyReadBytes;
+            if (numberOfActuallyReadBytes == -1) {
+                throw new ClosedSocket();
+            }
         }
-        assert (numberOfActuallyReadBytes == expectedNumberOfReadBytes) :
+        assert (sumNumberOfActuallyReadBytes == expectedNumberOfReadBytes) :
                 String.format("Number of actually read bytes is %d, then expected %d",
-                        numberOfActuallyReadBytes,
+                        sumNumberOfActuallyReadBytes,
                         expectedNumberOfReadBytes);
         return bytes;
     }
