@@ -21,23 +21,25 @@ public class ClientImpl implements Client {
     private OutputStream outputStream;
 
     public ClientImpl(ClientSettings clientSettings) {
-        assert clientSettings.getNumberOfRequest() > 0;
+        assert (clientSettings.getNumberOfRequest() > 0) : "numberOfRequests per user <= 0";
         this.clientSettings = clientSettings;
     }
 
     @Override
-    public ClientMetrics call() throws InterruptedException {
+    public ClientMetrics call() throws InterruptedException, IOException {
         long startTimeMillis = System.currentTimeMillis();
         int numberOfSentRequest = 0;
+        socket = initSocket();
         try {
-            socket = initSocket();
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
-            for (; numberOfSentRequest < clientSettings.getNumberOfRequest(); numberOfSentRequest++) {
-                processingOneRequest();
-                Thread.sleep(clientSettings.getClientSleepTime());
+            try {
+                for (; numberOfSentRequest < clientSettings.getNumberOfRequest(); numberOfSentRequest++) {
+                    processingOneRequest();
+                    Thread.sleep(clientSettings.getClientSleepTime());
+                }
+            } catch (IOException ignored) {
             }
-        } catch (IOException ignored) {
         } finally {
             try {
                 socket.close();
@@ -55,8 +57,7 @@ public class ClientImpl implements Client {
             try {
                 socket = new Socket(Constant.serverHost, Constant.computeServerPort);
                 isSocketReady = true;
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
             }
             //FIXME. Magic constant
             Thread.sleep(1000);
@@ -79,7 +80,7 @@ public class ClientImpl implements Client {
             throw new RuntimeException(e);
         }
         Collections.sort(list);
-        assert Arrays.equals(response.getNumberList().toArray(), list.toArray());
+        assert (Arrays.equals(response.getNumberList().toArray(), list.toArray())) : "sort is wrong";
     }
 
 }

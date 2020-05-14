@@ -18,13 +18,16 @@ public interface MessageProcessing {
         return readNBytes(inputStream, size);
     }
 
-    static private byte[] readNBytes(InputStream inputStream, int n) throws IOException {
-        byte[] bytes = new byte[n];
+    static private byte[] readNBytes(InputStream inputStream, int expectedNumberOfReadBytes) throws IOException {
+        byte[] bytes = new byte[expectedNumberOfReadBytes];
         int numberOfActuallyReadBytes = inputStream.read(bytes);
         if (numberOfActuallyReadBytes == -1) {
             throw new ClosedSocket();
         }
-        assert numberOfActuallyReadBytes == n;
+        assert (numberOfActuallyReadBytes == expectedNumberOfReadBytes) :
+                String.format("Number of actually read bytes is %d, then expected %d",
+                        numberOfActuallyReadBytes,
+                        expectedNumberOfReadBytes);
         return bytes;
     }
 
