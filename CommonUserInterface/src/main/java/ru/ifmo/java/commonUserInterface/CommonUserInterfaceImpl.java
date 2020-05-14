@@ -68,8 +68,12 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
             completionService.submit(client);
         }
         Future<ClientMetrics> future = completionService.take();
-        ClientMetrics firstClientMetrics = future.get();
-        haltServer();
+        ClientMetrics firstClientMetrics;
+        try {
+            firstClientMetrics = future.get();
+        } finally {
+            haltServer();
+        }
 
         List<ClientMetrics> clientMetricsList = new ArrayList<>(
                 Collections.singletonList(firstClientMetrics)
