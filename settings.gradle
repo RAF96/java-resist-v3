@@ -7,4 +7,5 @@ include 'Client'
 include 'ComputeServer'
 include 'IndividualThreadServer'
 include 'test'
+include 'BlockingServer'
 

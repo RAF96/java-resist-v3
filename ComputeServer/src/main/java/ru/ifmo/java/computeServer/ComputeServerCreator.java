@@ -1,5 +1,6 @@
 package ru.ifmo.java.computeServer;
 
+import ru.ifmo.java.blockingServer.BlockingServerImpl;
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.commonPartsOfComputeServer.ComputeServer;
 import ru.ifmo.java.commonPartsOfComputeServer.ComputeServerSettings;
@@ -13,7 +14,7 @@ public interface ComputeServerCreator {
     }
 
     static ComputeServer newBlockingServer(ComputeServerSettings computeServerSettings) {
-        return null;
+        return new BlockingServerImpl(computeServerSettings);
     }
 
     static ComputeServer newNotBlockingServer(ComputeServerSettings computeServerSettings) {
