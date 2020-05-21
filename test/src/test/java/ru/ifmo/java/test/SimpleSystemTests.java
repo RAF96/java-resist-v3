@@ -3,6 +3,7 @@ package ru.ifmo.java.test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.commonUserInterface.*;
 import ru.ifmo.java.managingServer.ManagingServer;
@@ -107,10 +108,9 @@ public class SimpleSystemTests {
     }
 
     @RepeatedTest(2)
-    public void runTestWhereCanWholeNumberOfRequestsNotEqualSuccessfulnumberOfRequests() throws IOException, InterruptedException {
+    public void runTestWhereCanWholeNumberOfRequestsNotEqualSuccessfulNumberOfRequests() throws IOException, InterruptedException {
         for (ServerType serverType : listOfTestedServer) {
             runSimpleTest(serverType, 10, 500, 10, 0);
         }
     }
-
 }

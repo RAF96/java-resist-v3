@@ -3,8 +3,8 @@ package ru.ifmo.java.commonPartsOfComputeServer;
 import java.util.List;
 
 public interface AverageServerMetrics extends ServerMetrics {
-    static AverageServerMetrics create(double requestProcessingTime,
-                                       double clientProcessingTime,
+    static AverageServerMetrics create(double sumRequestsProcessingTime,
+                                       double sumClientsProcessingTime,
                                        int numberOfData) {
         return new AverageServerMetrics() {
             @Override
@@ -14,12 +14,12 @@ public interface AverageServerMetrics extends ServerMetrics {
 
             @Override
             public double getRequestProcessingTime() {
-                return requestProcessingTime / numberOfData();
+                return sumRequestsProcessingTime / numberOfData();
             }
 
             @Override
             public double getClientProcessingTime() {
-                return clientProcessingTime / numberOfData();
+                return sumClientsProcessingTime / numberOfData();
             }
         };
     }
@@ -30,8 +30,8 @@ public interface AverageServerMetrics extends ServerMetrics {
         double clientProcessingTime = 0;
         for (AverageServerMetrics metrics : list) {
             numberOfData += metrics.numberOfData();
-            requestProcessingTime += metrics.getRequestProcessingTime() * numberOfData;
-            clientProcessingTime += metrics.getClientProcessingTime() * numberOfData;
+            requestProcessingTime += metrics.getRequestProcessingTime() * metrics.numberOfData();
+            clientProcessingTime += metrics.getClientProcessingTime() * metrics.numberOfData();
         }
         return AverageServerMetrics.create(requestProcessingTime,
                 clientProcessingTime,

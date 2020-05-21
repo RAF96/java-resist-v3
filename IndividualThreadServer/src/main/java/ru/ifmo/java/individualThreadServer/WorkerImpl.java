@@ -81,6 +81,7 @@ public class WorkerImpl implements Worker {
                     serverMetricsList.stream().mapToDouble(ServerMetrics::getRequestProcessingTime).sum(),
                     serverMetricsList.stream().mapToDouble(ServerMetrics::getClientProcessingTime).sum(),
                     index);
+            int x = 1;
         } finally {
             try {
                 socket.close();
