@@ -3,7 +3,6 @@ package ru.ifmo.java.test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 import ru.ifmo.java.common.ServerType;
 import ru.ifmo.java.commonUserInterface.AggregateServerPerformanceMetrics;
 import ru.ifmo.java.commonUserInterface.CommonUserInterface;
@@ -18,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class SystemTests {
+public class SystemTestsBlockingServer {
     private final static ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static Future<?> futureOfManagingServer;
     private static CommonUserInterface commonUserInterface;
@@ -37,8 +36,11 @@ public class SystemTests {
     }
 
     private void printMetrics(AggregateServerPerformanceMetrics metrics) {
+        System.out.print("requestProcessingTime: ");
         System.out.println(metrics.getRequestProcessingTime());
+        System.out.print("requestClientTime: ");
         System.out.println(metrics.getClientProcessingTime());
+        System.out.print("averageTimeSpendByClient: ");
         System.out.println(metrics.getAverageTimeSpendByClient());
     }
 
@@ -47,7 +49,7 @@ public class SystemTests {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
                 Collections.singletonList(0),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,
-                ServerType.INDIVIDUAL_THREAD_SERVER,
+                ServerType.BLOCKING_THREAD_SERVER,
                 1,
                 5,
                 1,
@@ -62,7 +64,7 @@ public class SystemTests {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
                 Collections.singletonList(0),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,
-                ServerType.INDIVIDUAL_THREAD_SERVER,
+                ServerType.BLOCKING_THREAD_SERVER,
                 1,
                 5,
                 2,
@@ -73,12 +75,12 @@ public class SystemTests {
     }
 
 
-    @RepeatedTest(2)
+    @RepeatedTest(1)
     public void runSimpleTestWithTwoUsers() throws IOException, ExecutionException, InterruptedException {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
                 Collections.singletonList(0),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,
-                ServerType.INDIVIDUAL_THREAD_SERVER,
+                ServerType.BLOCKING_THREAD_SERVER,
                 2,
                 5,
                 1,
@@ -93,7 +95,7 @@ public class SystemTests {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
                 Collections.singletonList(0),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,
-                ServerType.INDIVIDUAL_THREAD_SERVER,
+                ServerType.BLOCKING_THREAD_SERVER,
                 2,
                 5,
                 2,
@@ -107,7 +109,7 @@ public class SystemTests {
         SettingsOfComplexTestingOfServerPerformance settings = SettingsOfComplexTestingOfServerPerformance.create(
                 Collections.singletonList(0),
                 TypeOfVariableParameter.CLIENT_SLEEP_TIME,
-                ServerType.INDIVIDUAL_THREAD_SERVER,
+                ServerType.BLOCKING_THREAD_SERVER,
                 1,
                 5000,
                 1,

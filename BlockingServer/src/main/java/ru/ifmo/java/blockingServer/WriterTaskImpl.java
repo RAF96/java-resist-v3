@@ -24,19 +24,18 @@ public class WriterTaskImpl implements WriterTask {
 
     @Override
     public void run() {
-        try {
-            processing();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        processing();
     }
 
-    private void processing() throws IOException {
+    private void processing() {
         serverMetrics4.setClientProcessingEnd(System.currentTimeMillis());
         Protocol.MessageWithListOfDoubleVariables message = Protocol.MessageWithListOfDoubleVariables.newBuilder()
                 .addAllNumber(list).build();
         byte[] bytes = MessageProcessing.packMessage(message.toByteArray());
-        outputStream.write(bytes);
+        try {
+            outputStream.write(bytes);
+        } catch (IOException ignored) {
+        }
     }
 
     @Override
