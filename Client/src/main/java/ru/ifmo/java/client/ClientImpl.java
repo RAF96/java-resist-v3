@@ -27,9 +27,9 @@ public class ClientImpl implements Client {
 
     @Override
     public ClientMetrics call() throws InterruptedException, IOException {
-        long startTimeMillis = System.currentTimeMillis();
         int numberOfSentRequest = 0;
         socket = initSocket();
+        long startTimeMillis = System.currentTimeMillis();
         try {
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();

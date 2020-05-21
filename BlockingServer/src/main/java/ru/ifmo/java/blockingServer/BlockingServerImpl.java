@@ -37,7 +37,7 @@ public class BlockingServerImpl implements BlockingServer {
     @Override
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(Constant.computeServerPort)) {
-            acceptRequestsFromClient(serverSocket);
+            acceptRequestsFromClients(serverSocket);
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -49,7 +49,7 @@ public class BlockingServerImpl implements BlockingServer {
         }
     }
 
-    private void acceptRequestsFromClient(ServerSocket serverSocket) throws IOException {
+    private void acceptRequestsFromClients(ServerSocket serverSocket) throws IOException {
         for (int index = 0; index < computeServerSettings.getNumberOfClients(); index++){
             Socket socket = serverSocket.accept();
             ClientHandler clientHandler = ClientHandler.create(computeServerSettings,

@@ -46,14 +46,12 @@ public class ReadAllRequestTaskImpl implements ReadAllRequestTask {
     public void run() {
         try {
             processing();
+            postprocessing();
         } catch (IOException ignored) {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             close();
-        }
-        try {
-            postprocessing();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -63,10 +61,10 @@ public class ReadAllRequestTaskImpl implements ReadAllRequestTask {
 
     void processing() throws IOException {
         for (int index = 0;index < settings.getNumberOfRequest(); index++) {
-            ServerMetrics4 serverMetrics4 = ServerMetrics4.create();
-            serverMetrics4.setClientProcessingStart(System.currentTimeMillis());
             byte[] bytes;
             bytes = MessageProcessing.readPackedMessage(inputStream);
+            ServerMetrics4 serverMetrics4 = ServerMetrics4.create();
+            serverMetrics4.setClientProcessingStart(System.currentTimeMillis());
             List<Double> numberList;
             numberList = Protocol.MessageWithListOfDoubleVariables.parseFrom(bytes).getNumberList();
             Worker worker = Worker.create(serverMetrics4, numberList, workersThread, socket);
@@ -76,12 +74,18 @@ public class ReadAllRequestTaskImpl implements ReadAllRequestTask {
         }
     }
 
-    void postprocessing() throws ExecutionException, InterruptedException {
+    void postprocessing() throws InterruptedException {
         for (var future : futures) {
             try {
                 future.get();
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
             } catch (InterruptedException e) {
-                future.get();
+                try {
+                    future.get();
+                } catch (ExecutionException executionException) {
+                    throw new RuntimeException(executionException);
+                }
             }
         }
         List<ServerMetrics> serverMetricsList = workers.stream().map(Worker::getServerMetrics).filter(Objects::nonNull).collect(Collectors.toList());

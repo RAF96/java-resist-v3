@@ -6,7 +6,9 @@ import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics4;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class WorkerImpl implements Worker {
     private final ServerMetrics4 serverMetrics4;
@@ -33,7 +35,19 @@ public class WorkerImpl implements Worker {
             e.printStackTrace();
             return;
         }
-        writerTaskExecutorService.submit(writerTask);
+        Future<?> future = writerTaskExecutorService.submit(writerTask);
+        try {
+            future.get();
+        } catch (InterruptedException exception) {
+            writerTaskExecutorService.shutdownNow();
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (ExecutionException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     @Override
