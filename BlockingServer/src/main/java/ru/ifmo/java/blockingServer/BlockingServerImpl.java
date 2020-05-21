@@ -56,7 +56,7 @@ public class BlockingServerImpl implements BlockingServer {
                     socket,
                     clientHandlersExecutorService,
                     countDownLatch);
-            Thread thread = new Thread(clientHandler);
+            Thread thread = new Thread(clientHandler, "clientHandlerOfBlockingServer");
             thread.start();
             clientHandlers.add(clientHandler);
             threads.add(thread);

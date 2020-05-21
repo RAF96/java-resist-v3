@@ -67,7 +67,7 @@ public class ReadAllRequestTaskImpl implements ReadAllRequestTask {
             serverMetrics4.setClientProcessingStart(System.currentTimeMillis());
             List<Double> numberList;
             numberList = Protocol.MessageWithListOfDoubleVariables.parseFrom(bytes).getNumberList();
-            Worker worker = Worker.create(serverMetrics4, numberList, workersThread, socket);
+            Worker worker = Worker.create(serverMetrics4, numberList, writerTaskExecutor, socket);
             workers.add(worker);
             Future<?> future = workersThread.submit(worker);
             futures.add(future);

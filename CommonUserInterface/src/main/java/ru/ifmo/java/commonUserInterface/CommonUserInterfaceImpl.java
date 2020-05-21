@@ -75,9 +75,8 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
             firstClientMetrics = future.get();
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
-        } finally {
-            haltServer();
         }
+        haltServer();
 
         List<ClientMetrics> clientMetricsList = new ArrayList<>(
                 Collections.singletonList(firstClientMetrics)

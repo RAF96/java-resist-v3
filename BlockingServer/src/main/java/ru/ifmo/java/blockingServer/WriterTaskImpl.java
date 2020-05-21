@@ -24,10 +24,6 @@ public class WriterTaskImpl implements WriterTask {
 
     @Override
     public void run() {
-        processing();
-    }
-
-    private void processing() {
         serverMetrics4.setClientProcessingEnd(System.currentTimeMillis());
         Protocol.MessageWithListOfDoubleVariables message = Protocol.MessageWithListOfDoubleVariables.newBuilder()
                 .addAllNumber(list).build();
