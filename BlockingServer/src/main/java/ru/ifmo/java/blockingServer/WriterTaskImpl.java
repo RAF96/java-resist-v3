@@ -1,22 +1,46 @@
 package ru.ifmo.java.blockingServer;
 
+import ru.ifmo.java.common.MessageProcessing;
+import ru.ifmo.java.common.protocol.Protocol;
 import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics4;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
 
-//TODO
 public class WriterTaskImpl implements WriterTask {
-    public WriterTaskImpl(Socket socket, ServerMetrics4 serverMetrics4, List<Double> list) {
+    private final Socket socket;
+    private final ServerMetrics4 serverMetrics4;
+    private final List<Double> list;
+    private final OutputStream outputStream;
+
+    public WriterTaskImpl(Socket socket, ServerMetrics4 serverMetrics4, List<Double> list) throws IOException {
+        this.socket = socket;
+        outputStream = socket.getOutputStream();
+        this.serverMetrics4 = serverMetrics4;
+        this.list = list;
     }
 
     @Override
     public void run() {
+        try {
+            processing();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void processing() throws IOException {
+        serverMetrics4.setClientProcessingEnd(System.currentTimeMillis());
+        Protocol.MessageWithListOfDoubleVariables message = Protocol.MessageWithListOfDoubleVariables.newBuilder()
+                .addAllNumber(list).build();
+        byte[] bytes = MessageProcessing.packMessage(message.toByteArray());
+        outputStream.write(bytes);
     }
 
     @Override
     public ServerMetrics4 getServerMetrics4() {
-        return null;
+        return serverMetrics4;
     }
 }
