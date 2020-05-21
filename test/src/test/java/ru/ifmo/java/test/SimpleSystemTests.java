@@ -18,8 +18,8 @@ public class SimpleSystemTests {
     //TODO. uncomment
 //    private final static List<ServerType> listOfTestedServer =
 //            List.of(ServerType.INDIVIDUAL_THREAD_SERVER, ServerType.BLOCKING_THREAD_SERVER);
-//    private final static List<ServerType> listOfTestedServer = List.of(ServerType.BLOCKING_THREAD_SERVER);
-    private final static List<ServerType> listOfTestedServer = List.of(ServerType.INDIVIDUAL_THREAD_SERVER);
+    private final static List<ServerType> listOfTestedServer = List.of(ServerType.BLOCKING_THREAD_SERVER);
+//    private final static List<ServerType> listOfTestedServer = List.of(ServerType.INDIVIDUAL_THREAD_SERVER);
 
 
     @BeforeAll

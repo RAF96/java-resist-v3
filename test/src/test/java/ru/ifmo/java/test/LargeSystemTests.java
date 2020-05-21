@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+//FIXME. code with bad smell, it's best to make common interface for SimpleSystemTest and it.
 public class LargeSystemTests {
     private final static ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static Future<?> futureOfManagingServer;
