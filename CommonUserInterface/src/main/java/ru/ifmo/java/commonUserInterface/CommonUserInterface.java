@@ -9,5 +9,7 @@ public interface CommonUserInterface {
         return new CommonUserInterfaceImpl();
     }
 
-    AggregateServerPerformanceMetrics runComplexTestingOfServerPerformance(SettingsOfComplexTestingOfServerPerformance settings) throws InterruptedException, ExecutionException, IOException;
+    AggregateServerPerformanceMetrics runComplexTestingOfServerPerformance(SettingsOfComplexTestingOfServerPerformance settings) throws InterruptedException, IOException;
+
+    ServerPerformanceMetrics runTestingOfServerPerformance(SettingsOfServerPerformanceTesting settings) throws IOException, InterruptedException;
 }

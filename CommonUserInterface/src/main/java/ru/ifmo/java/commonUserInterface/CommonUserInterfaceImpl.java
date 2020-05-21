@@ -27,15 +27,16 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
     }
 
     @Override
-    public AggregateServerPerformanceMetrics runComplexTestingOfServerPerformance(SettingsOfComplexTestingOfServerPerformance settingsOfComplexTesting) throws InterruptedException, ExecutionException, IOException {
+    public AggregateServerPerformanceMetrics runComplexTestingOfServerPerformance(SettingsOfComplexTestingOfServerPerformance settingsOfComplexTesting) throws InterruptedException, IOException {
         List<ServerPerformanceMetrics> list = new ArrayList<>();
         for (var settingsOfTesting : settingsOfComplexTesting) {
-            list.add(testServerPerformance(settingsOfTesting));
+            list.add(runTestingOfServerPerformance(settingsOfTesting));
         }
         return AggregateServerPerformanceMetrics.create(list);
     }
 
-    private ServerPerformanceMetrics testServerPerformance(SettingsOfServerPerformanceTesting settings) throws IOException, ExecutionException, InterruptedException {
+    @Override
+    public ServerPerformanceMetrics runTestingOfServerPerformance(SettingsOfServerPerformanceTesting settings) throws IOException, InterruptedException {
         runServer(settings);
         //FIXME. Magic const
         Thread.sleep(1000);
@@ -55,7 +56,7 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
     }
 
     private ClientMetrics runClients(SettingsOfServerPerformanceTesting settings)
-            throws InterruptedException, ExecutionException, IOException {
+            throws InterruptedException, IOException {
         ExecutorService executorService = Executors.newFixedThreadPool(settings.getNumberOfClients());
         CompletionService<ClientMetrics> completionService = new ExecutorCompletionService<>(executorService);
         ClientSettings clientSettings = ClientSettings.create(
@@ -71,6 +72,8 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
         ClientMetrics firstClientMetrics;
         try {
             firstClientMetrics = future.get();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
         } finally {
             haltServer();
         }
@@ -80,7 +83,12 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
         );
         for (int index = 0; index < settings.getNumberOfClients() - 1; index++) {
             future = completionService.take();
-            ClientMetrics clientMetrics = future.get();
+            ClientMetrics clientMetrics;
+            try {
+                clientMetrics = future.get();
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
             clientMetricsList.add(clientMetrics);
         }
         OptionalDouble average = clientMetricsList.stream().mapToDouble(ClientMetrics::getAverageTimeSpendByClient).average();
