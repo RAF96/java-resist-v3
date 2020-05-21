@@ -4,7 +4,8 @@ public interface ServerPerformanceMetrics {
 
     static ServerPerformanceMetrics create(double requestProcessingTime,
                                            double clientProcessingTime,
-                                           double averageTimeSpendByClient) {
+                                           double averageTimeSpendByClient,
+                                           int numberOfSuccessfulRequests) {
         return new ServerPerformanceMetrics() {
             @Override
             public double getRequestProcessingTime() {
@@ -20,6 +21,11 @@ public interface ServerPerformanceMetrics {
             public double getAverageTimeSpendByClient() {
                 return averageTimeSpendByClient;
             }
+
+            @Override
+            public int getNumberOfSuccessfulRequests() {
+                return numberOfSuccessfulRequests;
+            }
         };
     }
 
@@ -28,4 +34,6 @@ public interface ServerPerformanceMetrics {
     double getClientProcessingTime();
 
     double getAverageTimeSpendByClient();
+
+    int getNumberOfSuccessfulRequests();
 }

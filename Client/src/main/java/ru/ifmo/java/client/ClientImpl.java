@@ -47,7 +47,7 @@ public class ClientImpl implements Client {
             }
         }
         long currentTimeMillis = System.currentTimeMillis();
-        return ClientMetrics.create(numberOfSentRequest, currentTimeMillis - startTimeMillis);
+        return ClientMetrics.create(numberOfSentRequest, (currentTimeMillis - startTimeMillis) * 1.0 / numberOfSentRequest);
     }
 
     private Socket initSocket() throws InterruptedException {

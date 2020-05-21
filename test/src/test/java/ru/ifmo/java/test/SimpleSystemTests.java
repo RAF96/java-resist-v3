@@ -18,8 +18,8 @@ public class SimpleSystemTests {
     //TODO. uncomment
 //    private final static List<ServerType> listOfTestedServer =
 //            List.of(ServerType.INDIVIDUAL_THREAD_SERVER, ServerType.BLOCKING_THREAD_SERVER);
-    private final static List<ServerType> listOfTestedServer = List.of(ServerType.BLOCKING_THREAD_SERVER);
-//    private final static List<ServerType> listOfTestedServer = List.of(ServerType.INDIVIDUAL_THREAD_SERVER);
+//    private final static List<ServerType> listOfTestedServer = List.of(ServerType.BLOCKING_THREAD_SERVER);
+    private final static List<ServerType> listOfTestedServer = List.of(ServerType.INDIVIDUAL_THREAD_SERVER);
 
 
     @BeforeAll
@@ -35,9 +35,12 @@ public class SimpleSystemTests {
         managingServerThread.interrupt();
     }
 
-    private static void printMetrics(ServerType serverType, ServerPerformanceMetrics metrics) {
+    private static void printMetrics(SettingsOfServerPerformanceTesting serverSettings, ServerPerformanceMetrics metrics) {
         System.out.print("serverType: ");
-        System.out.println(serverType);
+        System.out.println(serverSettings.getServerType());
+        System.out.println(String.format("Whole number of requests: %d, successful number of requests %d",
+                serverSettings.getNumberOfClients() * serverSettings.getNumberOfRequestPerClient(),
+                metrics.getNumberOfSuccessfulRequests()));
         System.out.print("requestProcessingTime: ");
         System.out.println(metrics.getRequestProcessingTime());
         System.out.print("requestClientTime: ");
@@ -61,7 +64,7 @@ public class SimpleSystemTests {
                 clientSleepTime
         );
         ServerPerformanceMetrics metrics = commonUserInterface.runTestingOfServerPerformance(settings);
-        printMetrics(serverType, metrics);
+        printMetrics(settings, metrics);
         return metrics;
     }
 
@@ -100,6 +103,13 @@ public class SimpleSystemTests {
     public void runTestWithOneUserAndLargeMessage() throws IOException, InterruptedException {
         for (ServerType serverType : listOfTestedServer) {
             runSimpleTest(serverType, 1, 5000, 1, 0);
+        }
+    }
+
+    @RepeatedTest(2)
+    public void runTestWhereCanWholeNumberOfRequestsNotEqualSuccessfulnumberOfRequests() throws IOException, InterruptedException {
+        for (ServerType serverType : listOfTestedServer) {
+            runSimpleTest(serverType, 10, 500, 10, 0);
         }
     }
 

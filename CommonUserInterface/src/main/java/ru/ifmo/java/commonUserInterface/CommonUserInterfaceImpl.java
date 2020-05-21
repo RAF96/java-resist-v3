@@ -42,7 +42,8 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
         Thread.sleep(1000);
         ClientMetrics clientMetrics = runClients(settings);
         ServerMetrics serverMetrics = getManagingServerResponse();
-        return ServerPerformanceMetrics.create(serverMetrics.getRequestProcessingTime(), serverMetrics.getClientProcessingTime(), clientMetrics.getAverageTimeSpendByClient());
+        return ServerPerformanceMetrics.create(serverMetrics.getRequestProcessingTime(), serverMetrics.getClientProcessingTime(),
+                clientMetrics.getAverageTimeSpendByClient(), clientMetrics.getNumberOfRequest());
     }
 
     private void runServer(SettingsOfServerPerformanceTesting settings) throws IOException {
@@ -91,8 +92,7 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
             }
             clientMetricsList.add(clientMetrics);
         }
-        OptionalDouble average = clientMetricsList.stream().mapToDouble(ClientMetrics::getAverageTimeSpendByClient).average();
-        return ClientMetrics.create(average.orElseThrow());
+        return ClientMetrics.average(clientMetricsList);
     }
 
     private void haltServer() throws IOException {
