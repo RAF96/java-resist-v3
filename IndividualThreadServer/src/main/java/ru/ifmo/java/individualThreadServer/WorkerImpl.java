@@ -3,7 +3,6 @@ package ru.ifmo.java.individualThreadServer;
 import com.google.protobuf.InvalidProtocolBufferException;
 import ru.ifmo.java.common.MessageProcessing;
 import ru.ifmo.java.common.algorithm.Sort;
-import ru.ifmo.java.common.protocol.Protocol;
 import ru.ifmo.java.common.protocol.Protocol.*;
 import ru.ifmo.java.commonPartsOfComputeServer.AverageServerMetrics;
 import ru.ifmo.java.commonPartsOfComputeServer.ComputeServerSettings;
@@ -17,7 +16,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.function.Function;
 
 public class WorkerImpl implements Worker {
     private final Socket socket;
@@ -47,7 +45,7 @@ public class WorkerImpl implements Worker {
             }
             List<ServerMetrics> serverMetricsList = new ArrayList<>();
             int index = 0;
-            for (; index < computeServerSettings.getNumberOfRequest() &&
+            for (; index < computeServerSettings.getNumberOfRequests() &&
                     !Thread.interrupted() && !socket.isClosed(); ++index) {
                 byte[] bytes;
                 try {

@@ -9,7 +9,7 @@ public interface ComputeServerSettings {
             }
 
             @Override
-            public int getNumberOfRequest() {
+            public int getNumberOfRequests() {
                 return numberOfRequest;
             }
         };
@@ -17,5 +17,5 @@ public interface ComputeServerSettings {
 
     int getNumberOfClients();
 
-    int getNumberOfRequest();
+    int getNumberOfRequests();
 }

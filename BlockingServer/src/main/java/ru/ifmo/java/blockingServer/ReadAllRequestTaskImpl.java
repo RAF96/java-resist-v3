@@ -1,6 +1,5 @@
 package ru.ifmo.java.blockingServer;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import ru.ifmo.java.common.MessageProcessing;
 import ru.ifmo.java.common.protocol.Protocol;
 import ru.ifmo.java.commonPartsOfComputeServer.AverageServerMetrics;
@@ -60,7 +59,7 @@ public class ReadAllRequestTaskImpl implements ReadAllRequestTask {
     }
 
     void processing() throws IOException {
-        for (int index = 0;index < settings.getNumberOfRequest(); index++) {
+        for (int index = 0; index < settings.getNumberOfRequests(); index++) {
             byte[] bytes;
             bytes = MessageProcessing.readPackedMessage(inputStream);
             ServerMetrics4 serverMetrics4 = ServerMetrics4.create();
