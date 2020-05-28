@@ -1,7 +1,7 @@
 package ru.ifmo.java.notBlockingServer;
 
 import ru.ifmo.java.common.MessageProcessing;
-import ru.ifmo.java.common.protocol.Protocol.*;
+import ru.ifmo.java.common.protocol.Protocol.MessageWithListOfDoubleVariables;
 import ru.ifmo.java.commonPartsOfComputeServer.AverageServerMetrics;
 import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics;
 import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics4;
@@ -45,7 +45,8 @@ public class TaskOfWritingAllRequestsImpl implements TaskOfWritingAllRequests {
 
     @Override
     public void registerChannel(SocketChannel socketChannel, ServerMetrics4 serverMetrics4, List<Double> list) {
-       newRegisterSocketChannels.putIfAbsent(socketChannel, new Pair(serverMetrics4, list));
+        newRegisterSocketChannels.putIfAbsent(socketChannel, new Pair(serverMetrics4, list));
+        selector.wakeup();
     }
 
     @Override
@@ -69,7 +70,7 @@ public class TaskOfWritingAllRequestsImpl implements TaskOfWritingAllRequests {
             SocketChannel socketChannel = pairEntry.getKey();
             List<Double> list = pairEntry.getValue().list;
             ServerMetrics4 serverMetrics4 = pairEntry.getValue().serverMetrics4;
-            serverMetrics4.setRequestProcessingEnd(System.currentTimeMillis());
+            serverMetrics4.setClientProcessingEnd(System.currentTimeMillis());
             SelectionKey selectionKey = socketChannel.register(selector, SelectionKey.OP_WRITE);
             serverMetricsList.add(AverageServerMetrics.create(serverMetrics4.getRequestProcessingTime(),
                     serverMetrics4.getClientProcessingTime(),
@@ -77,7 +78,6 @@ public class TaskOfWritingAllRequestsImpl implements TaskOfWritingAllRequests {
             ByteBuffer message = ByteBuffer.wrap(
                     MessageProcessing.packMessage(
                             MessageWithListOfDoubleVariables.newBuilder().addAllNumber(list).build().toByteArray()));
-            message.flip();
             mapSelectionKeyToMessage.put(selectionKey, message);
             iterator.remove();
         }

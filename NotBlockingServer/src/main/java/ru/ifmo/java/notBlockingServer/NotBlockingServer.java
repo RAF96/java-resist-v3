@@ -48,15 +48,12 @@ public class NotBlockingServer implements ComputeServer {
                     workerThreadPool,
                     taskOfWritingAllRequests);
 
-            Thread readerThread = new Thread(taskOfReadingAllRequests);
-            readerThread.start();
-            Thread writerThread = new Thread(taskOfWritingAllRequests);
+            Thread writerThread = new Thread(taskOfWritingAllRequests, "writerThread");
             writerThread.start();
 
             try {
-                writerThread.join();
-            } catch (InterruptedException e) {
-                readerThread.interrupt();
+                taskOfReadingAllRequests.run();
+            } finally {
                 workerThreadPool.shutdownNow();
                 writerThread.interrupt();
                 writerThread.join();
