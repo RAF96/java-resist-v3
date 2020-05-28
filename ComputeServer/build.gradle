@@ -9,6 +9,7 @@ dependencies {
     implementation project(":CommonPartsOfComputeServer")
     implementation project(":IndividualThreadServer")
     implementation project(":BlockingServer")
+    implementation project(":NotBlockingServer")
 }
 
 repositories {

@@ -6,8 +6,8 @@ import ru.ifmo.java.commonPartsOfComputeServer.ComputeServer;
 import ru.ifmo.java.commonPartsOfComputeServer.ComputeServerSettings;
 import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics;
 import ru.ifmo.java.individualThreadServer.IndividualThreadServer;
+import ru.ifmo.java.notBlockingServer.NotBlockingServer;
 
-//TODO
 public interface ComputeServerCreator {
     static ComputeServer newIndividualThreadServer(ComputeServerSettings computeServerSettings) {
         return new IndividualThreadServer(computeServerSettings);
@@ -18,7 +18,7 @@ public interface ComputeServerCreator {
     }
 
     static ComputeServer newNotBlockingServer(ComputeServerSettings computeServerSettings) {
-        return null;
+        return new NotBlockingServer(computeServerSettings);
     }
 
     static ComputeServer newComputeServer(ServerType serverType, ComputeServerSettings computeServerSettings) {
