@@ -11,6 +11,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,6 +32,7 @@ public class NotBlockingServer implements ComputeServer {
 
     @Override
     public void run() {
+        List<SocketChannel> listOfSocketChannels = new ArrayList<>();
         try(ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
             Selector readerSelector = Selector.open();
             Selector writerSelector = Selector.open()
@@ -39,6 +42,7 @@ public class NotBlockingServer implements ComputeServer {
                 SocketChannel socketChannel = serverSocketChannel.accept();
                 socketChannel.configureBlocking(false);
                 socketChannel.register(readerSelector, SelectionKey.OP_READ);
+                listOfSocketChannels.add(socketChannel);
             }
 
             TaskOfWritingAllRequests taskOfWritingAllRequests = TaskOfWritingAllRequests.create(writerSelector);
@@ -57,6 +61,9 @@ public class NotBlockingServer implements ComputeServer {
                 workerThreadPool.shutdownNow();
                 writerThread.interrupt();
                 writerThread.join();
+                for (var socketChannel : listOfSocketChannels) {
+                    socketChannel.close();
+                }
             }
             serverMetrics = taskOfWritingAllRequests.getMetrics();
         } catch (IOException | InterruptedException e) {

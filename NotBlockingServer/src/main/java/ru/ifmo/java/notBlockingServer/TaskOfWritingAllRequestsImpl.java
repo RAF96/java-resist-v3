@@ -53,6 +53,7 @@ public class TaskOfWritingAllRequestsImpl implements TaskOfWritingAllRequests {
     public void run() {
         try {
             while (!Thread.interrupted()) {
+                int select = selector.select();
                 registerNewChannels();
                 processingReadyChannels();
             }
@@ -79,12 +80,12 @@ public class TaskOfWritingAllRequestsImpl implements TaskOfWritingAllRequests {
                     MessageProcessing.packMessage(
                             MessageWithListOfDoubleVariables.newBuilder().addAllNumber(list).build().toByteArray()));
             mapSelectionKeyToMessage.put(selectionKey, message);
+            socketChannel.register(selector, SelectionKey.OP_WRITE);
             iterator.remove();
         }
     }
 
     private void processingReadyChannels() throws IOException {
-        int select = selector.select();
         Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
         while (iterator.hasNext()) {
             SelectionKey key = iterator.next();
