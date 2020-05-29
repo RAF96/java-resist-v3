@@ -5,14 +5,19 @@ import ru.ifmo.java.client.ClientMetrics;
 import ru.ifmo.java.client.ClientSettings;
 import ru.ifmo.java.common.Constant;
 import ru.ifmo.java.common.ServerType;
-import ru.ifmo.java.common.protocol.Protocol.*;
+import ru.ifmo.java.common.protocol.Protocol.MetricsOfComputingServer;
+import ru.ifmo.java.common.protocol.Protocol.RequestOfComputingServer;
+import ru.ifmo.java.common.protocol.Protocol.RequestOfComputingServerStartup;
+import ru.ifmo.java.common.protocol.Protocol.RequestOfHaltingOfComputingServer;
 import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class CommonUserInterfaceImpl implements CommonUserInterface {
@@ -103,6 +108,14 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
     private ServerMetrics getManagingServerResponse() throws IOException {
         MetricsOfComputingServer response = MetricsOfComputingServer.parseDelimitedFrom(inputStream);
         return ServerMetrics.create(response.getRequestProcessingTime(), response.getClientProcessingTime());
+    }
+
+    @Override
+    public void clear() {
+        try {
+            managingServerSocket.close();
+        } catch (IOException ignored) {
+        }
     }
 
 }

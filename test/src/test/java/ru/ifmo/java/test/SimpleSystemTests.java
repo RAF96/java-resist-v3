@@ -3,25 +3,16 @@ package ru.ifmo.java.test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 import ru.ifmo.java.common.ServerType;
-import ru.ifmo.java.commonUserInterface.*;
+import ru.ifmo.java.commonUserInterface.CommonUserInterface;
+import ru.ifmo.java.commonUserInterface.ServerPerformanceMetrics;
 import ru.ifmo.java.managingServer.ManagingServer;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-public class SimpleSystemTests {
+public class SimpleSystemTests implements InterfaceOfSystemTest {
     private final static Thread managingServerThread = new Thread(ManagingServer.create(), "managingServerThread");
     private static CommonUserInterface commonUserInterface;
-    //TODO. uncomment
-//    private final static List<ServerType> listOfTestedServer =
-//            List.of(ServerType.INDIVIDUAL_THREAD_SERVER, ServerType.BLOCKING_THREAD_SERVER);
-    private final static List<ServerType> listOfTestedServer = List.of(ServerType.NOT_BLOCKING_THREAD_SERVER);
-//    private final static List<ServerType> listOfTestedServer = List.of(ServerType.BLOCKING_THREAD_SERVER);
-//    private final static List<ServerType> listOfTestedServer = List.of(ServerType.INDIVIDUAL_THREAD_SERVER);
 
 
     @BeforeAll
@@ -35,20 +26,12 @@ public class SimpleSystemTests {
     @AfterAll
     private static void haltManagingServer() {
         managingServerThread.interrupt();
-    }
-
-    private static void printMetrics(SettingsOfServerPerformanceTesting serverSettings, ServerPerformanceMetrics metrics) {
-        System.out.print("serverType: ");
-        System.out.println(serverSettings.getServerType());
-        System.out.println(String.format("Whole number of requests: %d, successful number of requests %d",
-                serverSettings.getNumberOfClients() * serverSettings.getNumberOfRequestPerClient(),
-                metrics.getNumberOfSuccessfulRequests()));
-        System.out.print("requestProcessingTime: ");
-        System.out.println(metrics.getRequestProcessingTime());
-        System.out.print("requestClientTime: ");
-        System.out.println(metrics.getClientProcessingTime());
-        System.out.print("averageTimeSpendByClient: ");
-        System.out.println(metrics.getAverageTimeSpendByClient());
+        try {
+            managingServerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        commonUserInterface.clear();
     }
 
     private ServerPerformanceMetrics runSimpleTest(
@@ -58,18 +41,13 @@ public class SimpleSystemTests {
             int numberOfRequestPerClient,
             int clientSleepTime
     ) throws IOException, InterruptedException {
-        SettingsOfServerPerformanceTesting settings = SettingsOfServerPerformanceTesting.create(
+        return runSimpleTest(commonUserInterface,
                 serverType,
                 numberOfClients,
                 sizeOfRequest,
                 numberOfRequestPerClient,
-                clientSleepTime
-        );
-        ServerPerformanceMetrics metrics = commonUserInterface.runTestingOfServerPerformance(settings);
-        printMetrics(settings, metrics);
-        return metrics;
+                clientSleepTime);
     }
-
 
     @RepeatedTest(2)
     public void runTestWithOneUserAndOneRequest() throws IOException, InterruptedException {
@@ -114,4 +92,6 @@ public class SimpleSystemTests {
             runSimpleTest(serverType, 10, 500, 10, 0);
         }
     }
+
+
 }
