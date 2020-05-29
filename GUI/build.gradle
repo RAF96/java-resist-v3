@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":Common")
+    implementation project(":CommonUserInterface")
+    implementation ("com.fasterxml.jackson.core:jackson-databind:2.0.1")
+}
+
+application {
+    mainClassName = "ru.ifmo.java.gui.GUI"
+}

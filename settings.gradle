@@ -9,4 +9,5 @@ include 'IndividualThreadServer'
 include 'test'
 include 'BlockingServer'
 include 'NotBlockingServer'
+include 'GUI'
 

@@ -10,12 +10,18 @@ public class SettingsOfComplexTestingOfServerPerformanceImpl implements Settings
     private final List<Integer> rangeOfVariableParameter;
     private final TypeOfVariableParameter typeOfVariableParameter;
     private final ServerType serverType;
-    int sizeOfRequest;
+    private int sizeOfRequest;
     private final int numberOfRequestPerClient;
-    int numberOfClients;
-    int clientSleepTime;
+    private int numberOfClients;
+    private int clientSleepTime;
 
-    public SettingsOfComplexTestingOfServerPerformanceImpl(List<Integer> rangeOfVariableParameter, TypeOfVariableParameter typeOfVariableParameter, ServerType serverType, int numberOfClients, int sizeOfRequest, int numberOfRequestPerClient, int clientSleepTime) {
+    public SettingsOfComplexTestingOfServerPerformanceImpl(List<Integer> rangeOfVariableParameter,
+                                                           TypeOfVariableParameter typeOfVariableParameter,
+                                                           ServerType serverType,
+                                                           int numberOfClients,
+                                                           int sizeOfRequest,
+                                                           int numberOfRequestPerClient,
+                                                           int clientSleepTime) {
         this.rangeOfVariableParameter = rangeOfVariableParameter;
         this.typeOfVariableParameter = typeOfVariableParameter;
         this.serverType = serverType;
