@@ -74,4 +74,32 @@ public class SettingsOfComplexTestingOfServerPerformanceImpl implements Settings
 
         };
     }
+
+    public List<Integer> getRangeOfVariableParameter() {
+        return rangeOfVariableParameter;
+    }
+
+    public TypeOfVariableParameter getTypeOfVariableParameter() {
+        return typeOfVariableParameter;
+    }
+
+    public ServerType getServerType() {
+        return serverType;
+    }
+
+    public int getSizeOfRequest() {
+        return sizeOfRequest;
+    }
+
+    public int getNumberOfRequestPerClient() {
+        return numberOfRequestPerClient;
+    }
+
+    public int getNumberOfClients() {
+        return numberOfClients;
+    }
+
+    public int getClientSleepTime() {
+        return clientSleepTime;
+    }
 }

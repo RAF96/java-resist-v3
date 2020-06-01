@@ -78,30 +78,45 @@
                         </VBox>
                     </children>
                 </StackPane>
-                <LineChart GridPane.columnIndex="1" GridPane.rowIndex="0">
-                    <xAxis>
-                        <CategoryAxis side="BOTTOM"/>
-                    </xAxis>
-                    <yAxis>
-                        <NumberAxis side="LEFT"/>
-                    </yAxis>
-                </LineChart>
-                <LineChart GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <xAxis>
-                        <CategoryAxis side="BOTTOM"/>
-                    </xAxis>
-                    <yAxis>
-                        <NumberAxis side="LEFT"/>
-                    </yAxis>
-                </LineChart>
-                <LineChart GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <xAxis>
-                        <CategoryAxis side="BOTTOM"/>
-                    </xAxis>
-                    <yAxis>
-                        <NumberAxis side="LEFT"/>
-                    </yAxis>
-                </LineChart>
+                <VBox alignment="CENTER" GridPane.columnIndex="1">
+                    <children>
+                        <Label text="RequestProcessingTime"/>
+                        <LineChart fx:id="requestProcessingTime">
+                            <xAxis>
+                                <NumberAxis side="BOTTOM"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis side="LEFT"/>
+                            </yAxis>
+                        </LineChart>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" GridPane.rowIndex="1">
+                    <children>
+                        <Label text="ClientProcessingTime"/>
+                        <LineChart fx:id="clientProcessingTime">
+                            <xAxis>
+                                <NumberAxis side="BOTTOM"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis side="LEFT"/>
+                            </yAxis>
+                        </LineChart>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <children>
+                        <Label text="AverageTimeSpendByClient"/>
+                        <LineChart fx:id="averageTimeSpendByClient">
+                            <xAxis>
+                                <NumberAxis side="BOTTOM"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis side="LEFT"/>
+                            </yAxis>
+                        </LineChart>
+                    </children>
+                </VBox>
             </children>
         </GridPane>
     </children>

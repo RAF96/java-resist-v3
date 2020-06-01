@@ -1,7 +1,10 @@
 package ru.ifmo.java.gui;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -17,6 +20,8 @@ import java.util.List;
 import java.util.function.IntSupplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static javafx.collections.FXCollections.observableArrayList;
 
 public class Controller {
     private final CommonUserInterface commonUserInterface;
@@ -43,6 +48,13 @@ public class Controller {
     @FXML
     private TextField requestSizeTextField;
 
+    @FXML
+    private LineChart<Integer, Double> requestProcessingTime;
+    @FXML
+    private LineChart<Integer, Double> clientProcessingTime;
+    @FXML
+    private LineChart<Integer, Double> averageTimeSpendByClient;
+
     public Controller() {
         try {
             commonUserInterface = CommonUserInterface.create();
@@ -51,35 +63,62 @@ public class Controller {
         }
     }
 
+    static private ObservableList<XYChart.Series<Integer, Double>> mapData2Chart(List<Integer> x, List<Double> y) {
+        assert x.size() == y.size();
+        int size = x.size();
+        ObservableList<XYChart.Data<Integer, Double>> list = observableArrayList();
+        for (int index = 0; index < size; index++) {
+            list.add(new XYChart.Data<>(x.get(index), y.get(index)));
+        }
+        XYChart.Series<Integer, Double> series = new XYChart.Series<>();
+        series.setData(list);
+        series.setName("data");
+        return FXCollections.observableArrayList(series);
+    }
+
     @FXML
     private void initialize() {
-        typeOfVariableParameterChoiceBox.setItems(FXCollections.observableArrayList(TypeOfVariableParameter.values()));
-        typeOfServerChoiceBox.setItems(FXCollections.observableArrayList(ServerType.values()));
+        typeOfVariableParameterChoiceBox.setItems(observableArrayList(TypeOfVariableParameter.values()));
+        typeOfServerChoiceBox.setItems(observableArrayList(ServerType.values()));
     }
 
     @FXML
     public void run() throws IOException, InterruptedException {
+        boolean successful = false;
         try {
             SettingsOfComplexTestingOfServerPerformance settings = createSettings();
             AggregateServerPerformanceMetrics aggregateServerPerformanceMetrics =
                     commonUserInterface.runComplexTestingOfServerPerformance(settings);
+            assert aggregateServerPerformanceMetrics.getClientProcessingTime() != null;
+            assert aggregateServerPerformanceMetrics.getClientProcessingTime().size() != 0;
+            assert aggregateServerPerformanceMetrics.getRequestProcessingTime() != null;
+            assert aggregateServerPerformanceMetrics.getRequestProcessingTime().size() != 0;
+            assert aggregateServerPerformanceMetrics.getAverageTimeSpendByClient() != null;
+            assert aggregateServerPerformanceMetrics.getAverageTimeSpendByClient().size() != 0;
             uploadMetrics(settings, aggregateServerPerformanceMetrics);
             show(settings, aggregateServerPerformanceMetrics);
+            successful = true;
         } finally {
-            status.setText("Failure");
+            if (successful) {
+                status.setText("Success");
+            } else {
+                status.setText("Failure");
+            }
         }
-        status.setText("Success");
     }
 
     //TODO
-    private void show(SettingsOfComplexTestingOfServerPerformance settings,
-                      AggregateServerPerformanceMetrics aggregateServerPerformanceMetrics) {
-
-    }
-
-    //TODO
-    private void uploadMetrics(SettingsOfComplexTestingOfServerPerformance settingsOfServerPerformanceTestings,
+    private void uploadMetrics(SettingsOfComplexTestingOfServerPerformance settings,
                                AggregateServerPerformanceMetrics aggregateServerPerformanceMetrics) {
+
+    }
+
+    private void show(SettingsOfComplexTestingOfServerPerformance settings,
+                      AggregateServerPerformanceMetrics metrics) {
+        List<Integer> x = settings.getRangeOfVariableParameter();
+        requestProcessingTime.setData(mapData2Chart(x, metrics.getRequestProcessingTime()));
+        clientProcessingTime.setData(mapData2Chart(x, metrics.getClientProcessingTime()));
+        averageTimeSpendByClient.setData(mapData2Chart(x, metrics.getAverageTimeSpendByClient()));
     }
 
     private SettingsOfComplexTestingOfServerPerformance createSettings() {
@@ -102,7 +141,7 @@ public class Controller {
 
         TypeOfVariableParameter typeOfVariableParameter = typeOfVariableParameterChoiceBox.getValue();
         ServerType serverType = typeOfServerChoiceBox.getValue();
-        int numberOfClients = Integer.parseInt(numberOfRequestsByClient.getCharacters().toString());
+        int numberOfClients = Integer.parseInt(numberOfClientsTextField.getCharacters().toString());
         int sizeOfRequest = Integer.parseInt(requestSizeTextField.getCharacters().toString());
         int numberOfRequestPerClient = Integer.parseInt(numberOfRequestsByClient.getCharacters().toString());
         int clientSleepTime = Integer.parseInt(sleepTimeTextField.getCharacters().toString());

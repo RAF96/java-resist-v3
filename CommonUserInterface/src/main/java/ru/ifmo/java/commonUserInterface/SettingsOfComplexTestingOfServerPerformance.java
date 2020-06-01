@@ -2,8 +2,6 @@ package ru.ifmo.java.commonUserInterface;
 
 import ru.ifmo.java.common.ServerType;
 
-import javax.annotation.Nonnull;
-import java.util.Iterator;
 import java.util.List;
 
 public interface SettingsOfComplexTestingOfServerPerformance extends Iterable<SettingsOfServerPerformanceTesting> {
@@ -23,6 +21,20 @@ public interface SettingsOfComplexTestingOfServerPerformance extends Iterable<Se
                 sizeOfRequest,
                 numberOfRequestPerClient,
                 clientSleepTime
-                );
+        );
     }
+
+    List<Integer> getRangeOfVariableParameter();
+
+    TypeOfVariableParameter getTypeOfVariableParameter();
+
+    ServerType getServerType();
+
+    int getSizeOfRequest();
+
+    int getNumberOfRequestPerClient();
+
+    int getNumberOfClients();
+
+    int getClientSleepTime();
 }
