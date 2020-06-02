@@ -8,4 +8,6 @@ public class Constant {
     public static final int computeServerPort = 8082;
     // Number of threads for blocking server and not blocking server
     public static final int numberOfThreads = 4;
+
+    public static final String pathToFolderWithMetricsOfLastRunning = "metricsOfLastRunning";
 }

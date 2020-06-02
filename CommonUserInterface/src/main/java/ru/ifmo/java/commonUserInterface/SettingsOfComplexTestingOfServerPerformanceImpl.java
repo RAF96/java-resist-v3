@@ -5,6 +5,8 @@ import ru.ifmo.java.common.ServerType;
 import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class SettingsOfComplexTestingOfServerPerformanceImpl implements SettingsOfComplexTestingOfServerPerformance {
     private final List<Integer> rangeOfVariableParameter;
@@ -101,5 +103,25 @@ public class SettingsOfComplexTestingOfServerPerformanceImpl implements Settings
 
     public int getClientSleepTime() {
         return clientSleepTime;
+    }
+
+    @Override
+    public String toString() {
+        String listStr = rangeOfVariableParameter.stream().map(Objects::toString).collect(Collectors.joining(", "));
+        return
+                "rangeOfVariableParameter" + "\n" +
+                        listStr + "\n" +
+                        "typeOfVariableParameter" + "\n" +
+                        typeOfVariableParameter.toString() + "\n" +
+                        "serverType" + "\n" +
+                        serverType.toString() + "\n" +
+                        "sizeOfRequest" + "\n" +
+                        sizeOfRequest + "\n" +
+                        "numberOfRequestPerClient" + "\n" +
+                        numberOfRequestPerClient + "\n" +
+                        "numberOfCLients" + "\n" +
+                        numberOfClients + "\n" +
+                        "clientSleepTime" + "\n" +
+                        clientSleepTime;
     }
 }

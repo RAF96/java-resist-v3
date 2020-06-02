@@ -11,14 +11,14 @@ import ru.ifmo.java.common.protocol.Protocol.RequestOfComputingServerStartup;
 import ru.ifmo.java.common.protocol.Protocol.RequestOfHaltingOfComputingServer;
 import ru.ifmo.java.commonPartsOfComputeServer.ServerMetrics;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class CommonUserInterfaceImpl implements CommonUserInterface {
     private final Socket managingServerSocket;
@@ -37,7 +37,48 @@ public class CommonUserInterfaceImpl implements CommonUserInterface {
         for (var settingsOfTesting : settingsOfComplexTesting) {
             list.add(runTestingOfServerPerformance(settingsOfTesting));
         }
-        return AggregateServerPerformanceMetrics.create(list);
+        AggregateServerPerformanceMetrics aggregateServerPerformanceMetrics = AggregateServerPerformanceMetrics.create(list);
+        saveComplexTesting(aggregateServerPerformanceMetrics, settingsOfComplexTesting);
+        return aggregateServerPerformanceMetrics;
+    }
+
+    private void save(String string, String pathToFile) throws IOException {
+        File file = new File(pathToFile);
+        File parent = new File(file.getParent());
+        if (!parent.exists()) {
+            boolean flag = parent.mkdirs();
+            assert !flag : "Problems with creating folder";
+        }
+        if (!file.exists()) {
+            boolean flag = file.createNewFile();
+            assert !flag : "Problems with creating file";
+        }
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        fileOutputStream.write(string.getBytes());
+    }
+
+    private void saveComplexTesting(AggregateServerPerformanceMetrics aggregateServerPerformanceMetrics,
+                                    SettingsOfComplexTestingOfServerPerformance settingsOfComplexTesting) throws IOException {
+
+        String requestProcessingPath = Path.of(Constant.pathToFolderWithMetricsOfLastRunning, "requestProcessing").toString();
+        String requestProcessingStr = aggregateServerPerformanceMetrics.getRequestProcessingTime().stream().map(Object::toString)
+                .collect(Collectors.joining(", "));
+        save(requestProcessingStr, requestProcessingPath);
+
+        String clientProcessingPath = Path.of(Constant.pathToFolderWithMetricsOfLastRunning, "clientProcessing").toString();
+        String clientProcessingStr = aggregateServerPerformanceMetrics.getClientProcessingTime().stream().map(Object::toString)
+                .collect(Collectors.joining(", "));
+        save(clientProcessingStr, clientProcessingPath);
+
+        String averageTimeSpendByClientPath = Path.of(Constant.pathToFolderWithMetricsOfLastRunning, "averageTimeSpendByClient").toString();
+        String averageTimeSpendByClientStr = aggregateServerPerformanceMetrics.getAverageTimeSpendByClient().stream().map(Object::toString)
+                .collect(Collectors.joining(", "));
+        save(averageTimeSpendByClientStr, averageTimeSpendByClientPath);
+
+
+        String settingsPath = Path.of(Constant.pathToFolderWithMetricsOfLastRunning, "settings").toString();
+        String settingsStr = settingsOfComplexTesting.toString();
+        save(settingsStr, settingsPath);
     }
 
     @Override

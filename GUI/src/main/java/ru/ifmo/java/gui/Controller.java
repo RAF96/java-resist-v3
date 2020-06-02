@@ -95,7 +95,6 @@ public class Controller {
             assert aggregateServerPerformanceMetrics.getRequestProcessingTime().size() != 0;
             assert aggregateServerPerformanceMetrics.getAverageTimeSpendByClient() != null;
             assert aggregateServerPerformanceMetrics.getAverageTimeSpendByClient().size() != 0;
-            uploadMetrics(settings, aggregateServerPerformanceMetrics);
             show(settings, aggregateServerPerformanceMetrics);
             successful = true;
         } finally {
@@ -107,11 +106,6 @@ public class Controller {
         }
     }
 
-    //TODO
-    private void uploadMetrics(SettingsOfComplexTestingOfServerPerformance settings,
-                               AggregateServerPerformanceMetrics aggregateServerPerformanceMetrics) {
-
-    }
 
     private void show(SettingsOfComplexTestingOfServerPerformance settings,
                       AggregateServerPerformanceMetrics metrics) {
