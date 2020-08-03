@@ -10,4 +10,5 @@ public class Constant {
     public static final int numberOfThreads = 4;
 
     public static final String pathToFolderWithMetricsOfLastRunning = "metricsOfLastRunning";
+    public static final String pathToScriptData = "scriptData";
 }
